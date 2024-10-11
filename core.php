@@ -71,14 +71,14 @@ if (isset($_POST['add-property'])) {
         $categories = explode(",", $categories_input);
         $tags = explode(",", $tags_input);
 
-        foreach($categories as $category){
+        foreach ($categories as $category) {
             if (!empty($categories)) {
                 $sql_category = "INSERT INTO categories (name) VALUES ('$category')";
                 $conn->query($sql_category);
             }
         }
-        
-        foreach($tags as $tag){
+
+        foreach ($tags as $tag) {
             if (!empty($tags)) {
                 $sql_tag = "INSERT INTO tags (name) VALUES ('$tag')";
                 $conn->query($sql_tag);
@@ -86,8 +86,9 @@ if (isset($_POST['add-property'])) {
         }
 
         $conn->commit();
-
-    } catch (Exception $e) {$conn->rollback();}
+    } catch (Exception $e) {
+        $conn->rollback();
+    }
 
     header("location: index.php");
     exit();
@@ -95,8 +96,40 @@ if (isset($_POST['add-property'])) {
 
 
 //update product
-if (isset($_POST['edit-product'])) {
-    echo "edit product";
+if (isset($_POST['id'])) {
+    $id = mysqli_real_escape_string($conn, $_POST['id']); // Tránh SQL injection
+    $sql_query = "SELECT p.sku, p.title, p.price, p.featured_image, 
+            GROUP_CONCAT(DISTINCT c.id) AS category_ids,
+            GROUP_CONCAT(DISTINCT t.id) AS tag_ids,
+            GROUP_CONCAT(DISTINCT pg.image) AS gallery_images
+            FROM products p
+            LEFT JOIN product_gallery pg ON p.id = pg.product_id
+            LEFT JOIN product_categories pc ON p.id = pc.product_id
+            LEFT JOIN categories c ON pc.category_id = c.id
+            LEFT JOIN product_tags pt ON p.id = pt.product_id
+            LEFT JOIN tags t ON pt.tag_id = t.id
+            WHERE p.id = $id
+            GROUP BY p.id";
 
+    $fetch_query = mysqli_query($conn, $sql_query);
+
+    if (mysqli_num_rows($fetch_query) > 0) {
+        $row = mysqli_fetch_assoc($fetch_query);
+
+        // Tách chuỗi thành mảng
+        $row['category_ids'] = explode(',', $row['category_ids']);
+        $row['tag_ids'] = explode(',', $row['tag_ids']);
+        $row['gallery_images'] = explode(',', $row['gallery_images']);
+
+        // Trả về kết quả dưới dạng JSON
+        header('Content-Type: application/json');
+        echo json_encode($row);
+    } else {
+        echo json_encode(null);
+    }
+    exit();
+} else {
+    echo json_encode(null); // Nếu không nhận được id
+    exit();
 }
 

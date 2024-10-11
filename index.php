@@ -178,7 +178,7 @@
             <span class="close">&times;</span>
             <h2>Add New Product</h2>
             <form id="addProductForm" method="POST" action="core.php">
-                <?php include'./util/get-tag-category.php' ?>
+                <?php include './util/get-tag-category.php' ?>
 
                 <label for="sku">SKU:</label>
                 <input type="text" name="sku" required>
@@ -246,8 +246,8 @@
             <span class="close">&times;</span>
             <h2>Edit Product</h2>
             <form id="editProductForm" method="POST" action="">
-                <?php include'./util/get-tag-category.php' ?>  
-                    
+                <?php include './util/get-tag-category.php' ?>
+
                 <input type="hidden" id="product_id" name="id">
 
                 <label for="sku">SKU:</label>
@@ -260,7 +260,7 @@
                 <input type="text" id="price" name="price" required>
 
                 <label for="featured_image">Feature Image URL:</label>
-                <input type="text" id="featured_image" name="featured_image" required >
+                <input type="text" id="featured_image" name="featured_image" required>
 
                 <label for="gallery_images">Gallery Images:</label>
                 <input type="text" id="gallery_images" name="gallery_images">
@@ -268,7 +268,7 @@
                 <label for="categories">Categories:</label>
                 <?php foreach ($categories_list as $category): ?>
                     <div>
-                        <input type="checkbox" id="categories" name="categories[]" value="<?php echo $category['id']; ?>">
+                        <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
                         <?php echo htmlspecialchars($category['name']); ?>
                     </div>
                 <?php endforeach; ?>
@@ -276,10 +276,11 @@
                 <label for="tags">Tags:</label>
                 <?php foreach ($tags_list as $tag): ?>
                     <div>
-                        <input type="checkbox" id="tags" name="tags[]" value="<?php echo $tag['id']; ?>">
+                        <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
                         <?php echo htmlspecialchars($tag['name']); ?>
                     </div>
                 <?php endforeach; ?>
+
 
                 <button name="edit-product" type="submit">Save Changes</button>
             </form>
