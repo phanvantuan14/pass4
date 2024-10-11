@@ -198,18 +198,20 @@
                 <label for="categories">Categories:</label>
                 <?php foreach ($categories_list as $category): ?>
                     <div>
-                        <input type="checkbox" name="categories[]">
+                        <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
                         <?php echo $category['name']; ?>
                     </div>
                 <?php endforeach; ?>
 
+
                 <label for="tags">Tags:</label>
                 <?php foreach ($tags_list as $tag): ?>
                     <div>
-                        <input type="checkbox" name="tags[]">
+                        <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
                         <?php echo $tag['name']; ?>
                     </div>
                 <?php endforeach; ?>
+
 
                 <button name="add-product" type="submit">Add Product</button>
             </form>

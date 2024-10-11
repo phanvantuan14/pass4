@@ -2,6 +2,16 @@
 session_start();
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 
+
+$sku = "";
+$title = "";
+$price = "";
+$featured_image = "";
+$gallery_images = "";
+$categories = [];
+$tags = [];
+
+
 // add product
 if (isset($_POST['add-product'])) {
     $sku = $_POST["sku"];
@@ -17,16 +27,10 @@ if (isset($_POST['add-product'])) {
                 VALUES ('$sku', '$title', '$price', '$featured_image')";
     $result = mysqli_query($conn, $sql_query);
 
-    if ($result) {
-        $_SESSION['status'] = "Add product successfuly";
-    } else {
-        $_SESSION['status'] = "Add product faile";
-    }
-
-    $last_product_id = $conn->insert_id;
-
+    $last_product_id = mysqli_insert_id($conn);
     if (!$last_product_id) {
         header("location: index.php");
+        $_SESSION['status'] = "Add product faile";
         exit;
     }
 
@@ -34,7 +38,6 @@ if (isset($_POST['add-product'])) {
     foreach ($gallery_images_array as $image) {
         $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
                             VALUES ('$last_product_id', '$image')";
-        // $conn->query($sql_gallery);
         mysqli_query($conn, $sql_gallery);
     }
 
@@ -42,18 +45,21 @@ if (isset($_POST['add-product'])) {
         $sql_category = "INSERT INTO product_categories (product_id, category_id) 
                             VALUES ('$last_product_id', '$category_id')";
         mysqli_query($conn, $sql_category);
-        // $conn->query($sql_category);
-
-
     }
-
+    
     foreach ($tags as $tag_id) {
         $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
                         VALUES ('$last_product_id', '$tag_id')";
         mysqli_query($conn, $sql_tag);
-        // $conn->query($sql_tag);
-
     }
+    
+
+    if ($result) {
+        $_SESSION['status'] = "Add product successfuly";
+    } else {
+        $_SESSION['status'] = "Add product faile";
+    }
+
 
     header("location: index.php");
     exit();
