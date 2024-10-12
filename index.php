@@ -1,4 +1,7 @@
-<?php session_start() ?>
+<?php
+session_start();
+include './util/get-tag-category.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +10,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/051c46ace9.js" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -43,32 +46,64 @@
                 </button>
             </div>
             <div class="search-container">
-                <input placeholder="Search product..." type="text" />
+                <input id="searchInput" placeholder="Search product..." type="text" />
             </div>
         </div>
 
-        <!-- fillter product -->
+        <!-- Filter product -->
         <div class="filter-container">
-            <select>
-                <option>Date</option>
-            </select>
-            <select>
-                <option>ASC</option>
-                <option>DESC</option>
-            </select>
-            <select>
-                <option>Category</option>
-            </select>
-            <select>
-                <option>Select tag</option>
-            </select>
-            <input placeholder="mm/dd/yyyy" type="date" />
-            <input placeholder="mm/dd/yyyy" type="date" />
-            <input placeholder="Price from" type="text" />
-            <input placeholder="Price to" type="text" />
+            <form id="filterForm">
+                <select id="sortByDate" name="sort_by">
+                    <option value="date">Date</option>
+                </select>
 
-            <button>Filter</button>
+                <select id="sortOrder" name="sort_order">
+                    <option value="ASC">ASC</option>
+                    <option value="DESC">DESC</option>
+                </select>
+
+                <!-- Category selection -->
+                <div id="categoryContainer">
+                    <div id="categoryDropdown">
+                        <span >Category</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    
+                    <div id="categoryCheckboxes" >
+                        <?php foreach ($categories_list as $category): ?>
+                            <div>
+                                <input type="checkbox" name="categories" value="<?php echo $category['id']; ?>">
+                                <?php echo $category['name']; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- Tag selection -->
+                <div id="tagContainer">
+                    <div id="tagDropdown">
+                        <span value="">Select tag</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div id="tagCheckboxes" >
+                        <?php foreach ($tags_list as $tag): ?>
+                            <div>
+                                <input type="checkbox" name="tags" value="<?php echo $tag['id']; ?>">
+                                <?php echo $tag['name']; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <input id="dateFrom" name="date_from" placeholder="mm/dd/yyyy" type="date" />
+                <input id="dateTo" name="date_to" placeholder="mm/dd/yyyy" type="date" />
+                <input id="priceFrom" name="price_from" placeholder="Price from" type="text" />
+                <input id="priceTo" name="price_to" placeholder="Price to" type="text" />
+
+                <button type="button" id="filterButton">Filter</button>
+            </form>
         </div>
+
     </section>
 
     <table id="productTable">
@@ -88,64 +123,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
-            <?php
-            $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
-
-            $sql = "SELECT  p.id,
-                    p.sku,
-                    p.title,
-                    p.price,
-                    p.featured_image,
-                    GROUP_CONCAT(DISTINCT pg.image) AS gallery_images,
-                    GROUP_CONCAT(DISTINCT c.name) AS category_names,
-                    GROUP_CONCAT(DISTINCT t.name) AS tag_names,
-                    p.created_date
-                FROM products p
-                LEFT JOIN product_gallery pg ON p.id = pg.product_id
-                LEFT JOIN product_categories pc ON p.id = pc.product_id
-                LEFT JOIN categories c ON pc.category_id = c.id
-                LEFT JOIN product_tags pt ON p.id = pt.product_id
-                LEFT JOIN tags t ON pt.tag_id = t.id
-                GROUP BY p.id
-                ORDER BY p.created_date DESC;
-            ";
-
-            $result = $conn->query($sql);
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo '<tr>
-                        <td>' . $row['created_date'] . '</td>
-                        <td>' . $row['title'] . '</td>
-                        <td>' . $row['sku'] . '</td>
-                        <td>$' . $row['price'] . '</td>
-                        <td><img src="' . $row['featured_image'] . '" height="50" width="100" alt="Feature image"></td>';
-
-                    $gallery_images = explode(',', $row['gallery_images']);
-
-                    echo    '<td>';
-                    foreach ($gallery_images as $image) {
-                        echo '<img src="' . $image . '" 
-                    height="50" width="50" alt="Gallery image"> ';
-                    }
-                    echo    '</td>';
-
-                    echo    '<td>' . $row['category_names'] . '</td>';
-
-                    echo    '<td>' . $row['tag_names'] . '</td>';
-
-                    echo    '<td>
-                        <i class="fas fa-edit edit-btn" data-id="' . $row['id'] . '"></i>
-                        <i class="fas fa-trash-alt delete-one-icon" data-id="' . $row['id'] . '"></i>
-                    </td>
-                </tr>';
-                }
-            } else {
-                echo "0 results";
-            }
-            ?>
-
-        </tbody>
+        <tbody id="productResults"></tbody>
     </table>
 
     <div class="pagination">
@@ -167,7 +145,7 @@
             <span class="close">&times;</span>
             <h2>Add New Product</h2>
             <form id="addProductForm" method="POST" action="core.php">
-                <?php include './util/get-tag-category.php' ?>
+                <!-- <?php include './util/get-tag-category.php' ?> -->
 
                 <label for="sku">SKU:</label>
                 <input type="text" name="sku" required>
@@ -187,7 +165,7 @@
                 <label for="categories">Categories:</label>
                 <?php foreach ($categories_list as $category): ?>
                     <div>
-                        <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
+                        <input type="checkbox" name="categories" value="<?php echo $category['id']; ?>">
                         <?php echo $category['name']; ?>
                     </div>
                 <?php endforeach; ?>
@@ -196,7 +174,7 @@
                 <label for="tags">Tags:</label>
                 <?php foreach ($tags_list as $tag): ?>
                     <div>
-                        <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
+                        <input type="checkbox" name="tags" value="<?php echo $tag['id']; ?>">
                         <?php echo $tag['name']; ?>
                     </div>
                 <?php endforeach; ?>
@@ -237,7 +215,7 @@
             <span class="close">&times;</span>
             <h2>Edit Product</h2>
             <form id="editProductForm" method="POST" action="core.php">
-                <?php include './util/get-tag-category.php' ?>
+                <!-- <?php include './util/get-tag-category.php' ?> -->
 
                 <input type="hidden" id="product_id" name="id">
 
@@ -259,7 +237,7 @@
                 <label for="categories">Categories:</label>
                 <?php foreach ($categories_list as $category): ?>
                     <div>
-                        <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
+                        <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories" value="<?php echo $category['id']; ?>">
                         <?php echo htmlspecialchars($category['name']); ?>
                     </div>
                 <?php endforeach; ?>
@@ -267,7 +245,7 @@
                 <label for="tags">Tags:</label>
                 <?php foreach ($tags_list as $tag): ?>
                     <div>
-                        <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
+                        <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags" value="<?php echo $tag['id']; ?>">
                         <?php echo htmlspecialchars($tag['name']); ?>
                     </div>
                 <?php endforeach; ?>
@@ -295,8 +273,11 @@
     <!-- End Delete One Product Modal -->
 
     <script src="./js/main.js"></script>
+    <script src="./js/getAllData.js"></script>
     <script src="./js/popup.js"></script>
-
+    <script src="./js/filter.js"></script>
+    <script src="./js/search.js"></script>
+    
 </body>
 
 </html>

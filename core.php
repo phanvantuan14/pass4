@@ -2,6 +2,41 @@
 session_start();
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 
+//get view prodcut
+if (isset($_GET['view-product'])) {
+    $sql = "SELECT  p.id,
+                    p.sku,
+                    p.title,
+                    p.price,
+                    p.featured_image,
+                    GROUP_CONCAT(DISTINCT pg.image) AS gallery_images,
+                    GROUP_CONCAT(DISTINCT c.name) AS category_names,
+                    GROUP_CONCAT(DISTINCT t.name) AS tag_names,
+                    p.created_date
+                FROM products p
+                LEFT JOIN product_gallery pg ON p.id = pg.product_id
+                LEFT JOIN product_categories pc ON p.id = pc.product_id
+                LEFT JOIN categories c ON pc.category_id = c.id
+                LEFT JOIN product_tags pt ON p.id = pt.product_id
+                LEFT JOIN tags t ON pt.tag_id = t.id
+                GROUP BY p.id
+                ORDER BY p.created_date DESC;
+            ";
+
+    $result = $conn->query($sql);
+
+    $products = [];
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+    }
+
+    echo json_encode($products);
+};
+
+
 // add product
 if (isset($_POST['add-product'])) {
     $sku = $_POST["sku"];
@@ -36,13 +71,13 @@ if (isset($_POST['add-product'])) {
                             VALUES ('$last_product_id', '$category_id')";
         mysqli_query($conn, $sql_category);
     }
-    
+
     foreach ($tags as $tag_id) {
         $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
                         VALUES ('$last_product_id', '$tag_id')";
         mysqli_query($conn, $sql_tag);
     }
-    
+
 
     if ($result) {
         $_SESSION['status'] = "Add product successfuly";
@@ -150,21 +185,21 @@ if (isset($_POST['edit-product'])) {
     $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_gallery);
     if (mysqli_error($conn)) {
-        error_log("Error deleting gallery: " . mysqli_error($conn)); 
+        error_log("Error deleting gallery: " . mysqli_error($conn));
     }
 
 
     $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_categories);
     if (mysqli_error($conn)) {
-        error_log("Error deleting categories: " . mysqli_error($conn)); 
+        error_log("Error deleting categories: " . mysqli_error($conn));
     }
 
 
     $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_tags);
     if (mysqli_error($conn)) {
-        error_log("Error deleting tags: " . mysqli_error($conn)); 
+        error_log("Error deleting tags: " . mysqli_error($conn));
     }
 
 
@@ -174,7 +209,7 @@ if (isset($_POST['edit-product'])) {
                         VALUES ('$id', '$image')";
         mysqli_query($conn, $sql_gallery);
         if (mysqli_error($conn)) {
-            error_log("Error inserting gallery image: " . mysqli_error($conn)); 
+            error_log("Error inserting gallery image: " . mysqli_error($conn));
         }
     }
 
@@ -208,53 +243,154 @@ if (isset($_POST['edit-product'])) {
     exit();
 };
 
+
 //delete one product
 if (isset($_POST['click-delete-one-btn'])) {
     $id = $_POST['id'];
 
-    
+
     mysqli_begin_transaction($conn);
 
     try {
-        
+
         $delete_query = "DELETE FROM products WHERE id = $id";
         $result = mysqli_query($conn, $delete_query);
 
-        
+
         $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
         mysqli_query($conn, $sql_delete_gallery);
         if (mysqli_error($conn)) {
-            error_log("Error deleting gallery: " . mysqli_error($conn)); 
+            error_log("Error deleting gallery: " . mysqli_error($conn));
         }
 
-        
+
         $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
         mysqli_query($conn, $sql_delete_categories);
         if (mysqli_error($conn)) {
-            error_log("Error deleting categories: " . mysqli_error($conn)); 
+            error_log("Error deleting categories: " . mysqli_error($conn));
         }
 
-        
+
         $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
         mysqli_query($conn, $sql_delete_tags);
         if (mysqli_error($conn)) {
-            error_log("Error deleting tags: " . mysqli_error($conn)); 
+            error_log("Error deleting tags: " . mysqli_error($conn));
         }
 
-        
+
         if ($result) {
-            mysqli_commit($conn); 
+            mysqli_commit($conn);
             echo json_encode(['success' => true, 'message' => 'Product deleted successfully.']);
         } else {
-            mysqli_rollback($conn); 
+            mysqli_rollback($conn);
             echo json_encode(['success' => false, 'message' => 'Failed to delete product.']);
         }
     } catch (Exception $e) {
-        mysqli_rollback($conn); 
+        mysqli_rollback($conn);
         echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
     }
 
     exit();
-}
+};
 
 
+//filter product
+if (isset($_GET['filter-product'])) {
+
+    $sortBy = $_GET['formData']['sort_by'] ?? '';
+    $sortOrder = $_GET['formData']['sort_order'] ?? 'ASC';
+    $category = $_GET['formData']['category'] ?? '';
+    $tag = $_GET['formData']['tag'] ?? '';
+    $dateFrom = $_GET['formData']['date_from'] ?? '';
+    $dateTo = $_GET['formData']['date_to'] ?? '';
+    $priceFrom = $_GET['formData']['price_from'] ?? '';
+    $priceTo = $_GET['formData']['price_to'] ?? '';
+
+    $sql = "SELECT p.id, p.sku, p.title, p.price, p.featured_image, p.created_date
+            FROM products p
+            LEFT JOIN product_categories pc ON p.id = pc.product_id
+            LEFT JOIN categories c ON pc.category_id = c.id
+            LEFT JOIN product_tags pt ON p.id = pt.product_id
+            LEFT JOIN tags t ON pt.tag_id = t.id
+            WHERE 1=1"; // Sử dụng WHERE 1=1 để dễ dàng thêm điều kiện
+
+    if (!empty($category)) {
+        $sql .= " AND c.id = " . (int)$category;
+    }
+
+    if (!empty($tag)) {
+        $sql .= " AND t.id = " . (int)$tag;
+    }
+
+    if (!empty($dateFrom)) {
+        $sql .= " AND p.created_date >= '" . $mysqli->real_escape_string($dateFrom) . "'";
+    }
+
+    if (!empty($dateTo)) {
+        $sql .= " AND p.created_date <= '" . $mysqli->real_escape_string($dateTo) . "'";
+    }
+
+    if (!empty($priceFrom)) {
+        $sql .= " AND p.price >= " . (float)$priceFrom;
+    }
+
+    if (!empty($priceTo)) {
+        $sql .= " AND p.price <= " . (float)$priceTo;
+    }
+
+    $allowedSortColumns = ['price', 'created_date', 'title'];
+    $sortBy = in_array($sortBy, $allowedSortColumns) ? $sortBy : 'p.created_date';
+    $sql .= " ORDER BY $sortBy $sortOrder";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $products = [];
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+        echo json_encode($products);
+    } else {
+        echo json_encode([]);
+    }
+
+    exit;
+};
+
+
+// search product
+if (isset($_GET['search'])) {
+    $searchQuery = $_GET['search'];
+
+    $sql = "SELECT  p.id,
+                    p.sku,
+                    p.title,
+                    p.price,
+                    p.featured_image,
+                    GROUP_CONCAT(DISTINCT pg.image) AS gallery_images,
+                    GROUP_CONCAT(DISTINCT c.name) AS category_names,
+                    GROUP_CONCAT(DISTINCT t.name) AS tag_names,
+                    p.created_date
+                FROM products p
+                LEFT JOIN product_gallery pg ON p.id = pg.product_id
+                LEFT JOIN product_categories pc ON p.id = pc.product_id
+                LEFT JOIN categories c ON pc.category_id = c.id
+                LEFT JOIN product_tags pt ON p.id = pt.product_id
+                LEFT JOIN tags t ON pt.tag_id = t.id
+                WHERE p.title LIKE '%$searchQuery%' 
+                GROUP BY p.id
+                ORDER BY p.created_date DESC
+                LIMIT 5 OFFSET 0;
+            ";
+
+    $result = $conn->query($sql);
+
+    $products = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+    }
+
+    echo json_encode($products);
+};

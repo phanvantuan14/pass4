@@ -56,12 +56,38 @@ body {
 }
 
 .filter-container {
+    width: 100%;
+}
+.filter-container #filterForm{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap:10px;
-    width: 100%;
+}
+
+#categoryContainer, #tagContainer{
+    position: relative;
+}
+
+#categoryCheckboxes,#tagCheckboxes{
+    position: absolute;
+    top: 100%;
+    left: 0;    
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #ccc;
+    padding: 10px 20px;
+    z-index: 10;
+    display: inline;
+}
+
+#categoryDropdown, #tagDropdown{
+    padding: 10px 20px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: var(--fontSize);
+    z-index: 10;
 }
 
 .filter-container select,
@@ -278,4 +304,10 @@ table:hover i.delete-all {
 
 #cancelDelete:hover {
     background-color: #999;
+}
+
+
+#categoryCheckboxes,
+#tagCheckboxes {
+    display: none;
 }
