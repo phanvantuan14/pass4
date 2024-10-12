@@ -136,7 +136,7 @@
 
                     echo    '<td>
                         <i class="fas fa-edit edit-btn" data-id="' . $row['id'] . '"></i>
-                        <i class="fas fa-trash-alt delete-btn" data-id="' . $row['id'] . '"></i>
+                        <i class="fas fa-trash-alt delete-one-icon" data-id="' . $row['id'] . '"></i>
                     </td>
                 </tr>';
                 }
@@ -146,17 +146,6 @@
             ?>
 
         </tbody>
-
-        <div class="modal" id="deleteConfirmModal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Confirm Delete</h2>
-                <p>Are you sure you want to delete this product?</p>
-                <button id="confirmDelete">Yes, Delete</button>
-                <button id="cancelDelete">Cancel</button>
-            </div>
-        </div>
-
     </table>
 
     <div class="pagination">
@@ -247,7 +236,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Edit Product</h2>
-            <form id="editProductForm" method="POST" action="">
+            <form id="editProductForm" method="POST" action="core.php">
                 <?php include './util/get-tag-category.php' ?>
 
                 <input type="hidden" id="product_id" name="id">
@@ -283,12 +272,27 @@
                     </div>
                 <?php endforeach; ?>
 
-
-                <button name="edit-product" type="submit">Save Changes</button>
+                <button name="edit-product" type="submit">Update Changes</button>
             </form>
         </div>
     </div>
     <!-- End Product Modal -->
+
+
+    <!-- Delete One Product Modal -->
+    <div class="modal" id="deleteOneProduct">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Delete</h2>
+            <form id="deleteOneProductForm" method="POST" action="core.php">
+                <p>Are you sure you want to delete this product?</p>
+                <input type="hidden" id="product_id" name="id">
+                <button id="confirmDelete">Yes, Delete</button>
+                <button id="cancelDelete">Cancel</button>
+            </form>
+        </div>
+    </div>
+    <!-- End Delete One Product Modal -->
 
     <script src="./js/main.js"></script>
     <script src="./js/popup.js"></script>

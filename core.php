@@ -2,16 +2,6 @@
 session_start();
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 
-
-$sku = "";
-$title = "";
-$price = "";
-$featured_image = "";
-$gallery_images = "";
-$categories = [];
-$tags = [];
-
-
 // add product
 if (isset($_POST['add-product'])) {
     $sku = $_POST["sku"];
@@ -101,10 +91,10 @@ if (isset($_POST['add-property'])) {
 }
 
 
-//update product
-if (isset($_POST['id'])) {
+//get data to form update product
+if (isset($_POST['click-edit-btn'])) {
     $id = mysqli_real_escape_string($conn, $_POST['id']); // Tránh SQL injection
-    $sql_query = "SELECT p.sku, p.title, p.price, p.featured_image, 
+    $sql_query = "SELECT p.id, p.sku, p.title, p.price, p.featured_image, 
             GROUP_CONCAT(DISTINCT c.id) AS category_ids,
             GROUP_CONCAT(DISTINCT t.id) AS tag_ids,
             GROUP_CONCAT(DISTINCT pg.image) AS gallery_images
@@ -134,8 +124,137 @@ if (isset($_POST['id'])) {
         echo json_encode(null);
     }
     exit();
-} else {
-    echo json_encode(null); // Nếu không nhận được id
+};
+
+
+//update product
+if (isset($_POST['edit-product'])) {
+
+    $id = $_POST['id'];
+    $sku = $_POST["sku"];
+    $title = $_POST["title"];
+    $price = $_POST["price"];
+    $featured_image = $_POST["featured_image"];
+    $gallery_images = $_POST["gallery_images"];
+    $categories = $_POST["categories"];
+    $tags = $_POST["tags"];
+
+
+    $sql_update_product = "UPDATE products SET sku = '$sku', title = '$title', price = '$price', featured_image = '$featured_image' WHERE id = $id";
+    mysqli_query($conn, $sql_update_product);
+    if (mysqli_error($conn)) {
+        error_log("Error updating product: " . mysqli_error($conn));
+    }
+
+
+    $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
+    mysqli_query($conn, $sql_delete_gallery);
+    if (mysqli_error($conn)) {
+        error_log("Error deleting gallery: " . mysqli_error($conn)); 
+    }
+
+
+    $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
+    mysqli_query($conn, $sql_delete_categories);
+    if (mysqli_error($conn)) {
+        error_log("Error deleting categories: " . mysqli_error($conn)); 
+    }
+
+
+    $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
+    mysqli_query($conn, $sql_delete_tags);
+    if (mysqli_error($conn)) {
+        error_log("Error deleting tags: " . mysqli_error($conn)); 
+    }
+
+
+    $gallery_images_array = explode(",", $gallery_images);
+    foreach ($gallery_images_array as $image) {
+        $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
+                        VALUES ('$id', '$image')";
+        mysqli_query($conn, $sql_gallery);
+        if (mysqli_error($conn)) {
+            error_log("Error inserting gallery image: " . mysqli_error($conn)); 
+        }
+    }
+
+
+    foreach ($categories as $category_id) {
+        $sql_category = "INSERT INTO product_categories (product_id, category_id) 
+                        VALUES ('$id', '$category_id')";
+        mysqli_query($conn, $sql_category);
+        if (mysqli_error($conn)) {
+            error_log("Error inserting category: " . mysqli_error($conn));
+        }
+    }
+
+
+    foreach ($tags as $tag_id) {
+        $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
+                    VALUES ('$id', '$tag_id')";
+        mysqli_query($conn, $sql_tag);
+        if (mysqli_error($conn)) {
+            error_log("Error inserting tag: " . mysqli_error($conn));
+        }
+    }
+
+    if (mysqli_affected_rows($conn) > 0) {
+        $_SESSION['status'] = "Product updated successfully";
+    } else {
+        $_SESSION['status'] = "Failed to update product";
+    }
+
+    header("location: index.php");
+    exit();
+};
+
+//delete one product
+if (isset($_POST['click-delete-one-btn'])) {
+    $id = $_POST['id'];
+
+    
+    mysqli_begin_transaction($conn);
+
+    try {
+        
+        $delete_query = "DELETE FROM products WHERE id = $id";
+        $result = mysqli_query($conn, $delete_query);
+
+        
+        $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
+        mysqli_query($conn, $sql_delete_gallery);
+        if (mysqli_error($conn)) {
+            error_log("Error deleting gallery: " . mysqli_error($conn)); 
+        }
+
+        
+        $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
+        mysqli_query($conn, $sql_delete_categories);
+        if (mysqli_error($conn)) {
+            error_log("Error deleting categories: " . mysqli_error($conn)); 
+        }
+
+        
+        $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
+        mysqli_query($conn, $sql_delete_tags);
+        if (mysqli_error($conn)) {
+            error_log("Error deleting tags: " . mysqli_error($conn)); 
+        }
+
+        
+        if ($result) {
+            mysqli_commit($conn); 
+            echo json_encode(['success' => true, 'message' => 'Product deleted successfully.']);
+        } else {
+            mysqli_rollback($conn); 
+            echo json_encode(['success' => false, 'message' => 'Failed to delete product.']);
+        }
+    } catch (Exception $e) {
+        mysqli_rollback($conn); 
+        echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+    }
+
     exit();
 }
+
 

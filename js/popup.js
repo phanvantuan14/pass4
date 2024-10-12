@@ -3,19 +3,13 @@ $(document).ready(function () {
     const addProduct = $("#addProductModal");
     const addProperty = $("#addPropertyModal");
     const editProduct = $("#editProductModal");
-    const deleteProduct = $("#deleteConfirmModal");
+    const deleteProduct = $("#deleteOneProduct");
 
     close.on("click", function () {
         addProperty.hide();
         addProduct.hide();
         editProduct.hide();
         deleteProduct.hide();
-    });
-
-    $(window).on("click", function (event) {
-        if ($(event.target).hasClass("modal")) {
-        $(".modal").hide();
-        }
     });
 
     function popupAddProduct() {
@@ -32,47 +26,48 @@ $(document).ready(function () {
     }
     popupAddProperty();
 
-    function popupEditProduct() {
-        $(".fa-edit").on("click", function () {
-            const productId = $(this).data("id");
-            console.log(productId);
 
-            $.ajax
-            ({
+    function popupEditProduct() {
+        $(".edit-btn").on("click", function () {
+            const productId = $(this).data("id");
+    
+            $.ajax({
                 method: "POST",
                 url: "./core.php",
-                data: { id: productId },
+                data: {   
+                    'click-edit-btn': true,
+                    id: productId 
+                },
+                dataType: 'json', // Chắc chắn nhận về JSON
                 success: function (data) {
-                    console.log(data); 
+    
                     if (data) {
+                        $("#product_id").val(data.id);
                         $("#sku").val(data.sku);
                         $("#title").val(data.title);
                         $("#price").val(data.price);
                         $("#featured_image").val(data.featured_image);
-                
+    
                         if (Array.isArray(data.gallery_images)) {
                             $("#gallery_images").val(data.gallery_images.join(","));
                         } else {
                             $("#gallery_images").val(data.gallery_images);
                         }
-                
+    
                         $('input[name="categories[]"]').prop("checked", false);
-
                         if (data.category_ids) {
-                        data.category_ids.forEach((id) => {
-                            $('input[name="categories[]"][value="' + id + '"]').prop(
-                            "checked",true);
-                        });
+                            data.category_ids.forEach((id) => {
+                                $('input[name="categories[]"][value="' + id + '"]').prop("checked", true);
+                            });
                         }
     
                         $('input[name="tags[]"]').prop("checked", false);
                         if (data.tag_ids) {
-                        data.tag_ids.forEach((id) => {
-                            $('input[name="tags[]"][value="' + id + '"]').prop(
-                            "checked",true);
-                        });
+                            data.tag_ids.forEach((id) => {
+                                $('input[name="tags[]"][value="' + id + '"]').prop("checked", true);
+                            });
                         }
-
+    
                         editProduct.show();
                     } else {
                         alert("Không tìm thấy sản phẩm.");
@@ -83,30 +78,50 @@ $(document).ready(function () {
                 },
             });
         });
-
     }
+    
     popupEditProduct();
 
     function popupDeleteOneProduct() {
-        let productToDelete;
+        $(".delete-one-icon").on("click", function () {
+            const productId = $(this).data("id");
+            console.log(productId);
+            $("#product_id").val(productId);
+            deleteProduct.show(); 
+    
+            $("#confirmDelete").off('click').on('click', function (e) {
+                e.preventDefault(); 
+    
+                $.ajax({
+                    method: "POST",
+                    url: "./core.php",
+                    data: {   
+                        'click-delete-one-btn': true,
+                        id: productId 
+                    },
+                    success: function (data) {
+                        if (typeof data === "string") {
+                            data = JSON.parse(data); 
+                        }
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }  
+                    },
+                    error: function () {
+                        alert("Error occurred while deleting the product.");
+                    }    
+                });
+            });
 
-        $(".fa-trash-alt").on("click", function () {
-            const row = $(this).closest("tr");
-            productToDelete = row;
-
-            deleteProduct.show();
-        });
-
-        $("#cancelDelete, .close-delete").on("click", function () {
-        deleteProduct.hide();
-        });
-
-        $("#confirmDelete").on("click", function () {
-        productToDelete.remove();
-
-        deleteProduct.hide();
+            $("#cancelDelete").on("click", function (e) {
+                e.preventDefault(); 
+                deleteProduct.hide(); 
+            });
         });
     }
+    
     popupDeleteOneProduct();
 });
 
