@@ -53,6 +53,7 @@ include './util/get-tag-category.php';
         <!-- Filter product -->
         <div class="filter-container">
             <form id="filterForm">
+                
                 <select id="sortByDate" name="sort_by">
                     <option value="date">Date</option>
                 </select>
@@ -65,14 +66,14 @@ include './util/get-tag-category.php';
                 <!-- Category selection -->
                 <div id="categoryContainer">
                     <div id="categoryDropdown">
-                        <span >Category</span>
+                        <span>Category</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </div>
-                    
-                    <div id="categoryCheckboxes" >
+
+                    <div id="categoryCheckboxes">
                         <?php foreach ($categories_list as $category): ?>
                             <div>
-                                <input type="checkbox" name="categories" value="<?php echo $category['id']; ?>">
+                                <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
                                 <?php echo $category['name']; ?>
                             </div>
                         <?php endforeach; ?>
@@ -85,10 +86,10 @@ include './util/get-tag-category.php';
                         <span value="">Select tag</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </div>
-                    <div id="tagCheckboxes" >
+                    <div id="tagCheckboxes">
                         <?php foreach ($tags_list as $tag): ?>
                             <div>
-                                <input type="checkbox" name="tags" value="<?php echo $tag['id']; ?>">
+                                <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
                                 <?php echo $tag['name']; ?>
                             </div>
                         <?php endforeach; ?>
@@ -127,15 +128,6 @@ include './util/get-tag-category.php';
     </table>
 
     <div class="pagination">
-        <button id="prevPage">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="page-number ">1</button>
-        <button class="page-number">2</button>
-        <button class="page-number">3</button>
-        <button id="nextPage">
-            <i class="fas fa-chevron-right"></i>
-        </button>
     </div>
 
 
@@ -145,8 +137,6 @@ include './util/get-tag-category.php';
             <span class="close">&times;</span>
             <h2>Add New Product</h2>
             <form id="addProductForm" method="POST" action="core.php">
-                <!-- <?php include './util/get-tag-category.php' ?> -->
-
                 <label for="sku">SKU:</label>
                 <input type="text" name="sku" required>
 
@@ -165,7 +155,7 @@ include './util/get-tag-category.php';
                 <label for="categories">Categories:</label>
                 <?php foreach ($categories_list as $category): ?>
                     <div>
-                        <input type="checkbox" name="categories" value="<?php echo $category['id']; ?>">
+                        <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
                         <?php echo $category['name']; ?>
                     </div>
                 <?php endforeach; ?>
@@ -174,7 +164,7 @@ include './util/get-tag-category.php';
                 <label for="tags">Tags:</label>
                 <?php foreach ($tags_list as $tag): ?>
                     <div>
-                        <input type="checkbox" name="tags" value="<?php echo $tag['id']; ?>">
+                        <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
                         <?php echo $tag['name']; ?>
                     </div>
                 <?php endforeach; ?>
@@ -215,7 +205,6 @@ include './util/get-tag-category.php';
             <span class="close">&times;</span>
             <h2>Edit Product</h2>
             <form id="editProductForm" method="POST" action="core.php">
-                <!-- <?php include './util/get-tag-category.php' ?> -->
 
                 <input type="hidden" id="product_id" name="id">
 
@@ -237,7 +226,7 @@ include './util/get-tag-category.php';
                 <label for="categories">Categories:</label>
                 <?php foreach ($categories_list as $category): ?>
                     <div>
-                        <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories" value="<?php echo $category['id']; ?>">
+                        <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
                         <?php echo htmlspecialchars($category['name']); ?>
                     </div>
                 <?php endforeach; ?>
@@ -245,7 +234,7 @@ include './util/get-tag-category.php';
                 <label for="tags">Tags:</label>
                 <?php foreach ($tags_list as $tag): ?>
                     <div>
-                        <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags" value="<?php echo $tag['id']; ?>">
+                        <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
                         <?php echo htmlspecialchars($tag['name']); ?>
                     </div>
                 <?php endforeach; ?>
@@ -273,11 +262,12 @@ include './util/get-tag-category.php';
     <!-- End Delete One Product Modal -->
 
     <script src="./js/main.js"></script>
-    <script src="./js/getAllData.js"></script>
     <script src="./js/popup.js"></script>
+    <script src="./js/edit.js"></script>
+    <script src="./js/delete-one.js"></script>
     <script src="./js/filter.js"></script>
     <script src="./js/search.js"></script>
-    
+
 </body>
 
 </html>

@@ -151,6 +151,13 @@ td {
     margin: 0 5px;
 }
 
+.pagination .active {
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+}
+
+
 i.fa-trash-alt{
     margin-left: 8px;
 }
@@ -165,10 +172,6 @@ table:hover i.delete-all {
     opacity: 1; 
 }
 
-.pagination button:hover {
-    color:#fff;
-    background-color: #007bff ;
-}
 
 
 
