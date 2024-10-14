@@ -4,9 +4,7 @@ $(document).ready(function () {
 
         $("#product_id").val(productId);
 
-        $("#confirmDelete")
-        .off("click")
-        .on("click", function (e) {
+        $("#confirmDelete").on("click", function (e) {
             e.preventDefault();
 
             $.ajax({
@@ -17,6 +15,7 @@ $(document).ready(function () {
                 id: productId,
             },
             success: function (data) {
+                console.log(data);
                 if (typeof data === "string") {
                 data = JSON.parse(data);
                 }
@@ -31,5 +30,7 @@ $(document).ready(function () {
             },
             });
         });
+
+
     });
 });

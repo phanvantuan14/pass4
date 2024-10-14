@@ -4,12 +4,14 @@ $(document).ready(function () {
     const addProperty = $("#addPropertyModal");
     const editProduct = $("#editProductModal");
     const deleteProduct = $("#deleteOneProduct");
+    const deleteAllProduct = $("#deleteAllProduct");
 
     close.on("click", function () {
         addProperty.hide();
         addProduct.hide();
         editProduct.hide();
         deleteProduct.hide();
+        deleteAllProduct.hide();
     });
 
     $("#addProduct").on("click", function () {
@@ -27,5 +29,14 @@ $(document).ready(function () {
     $("#productResults").on("click", ".delete-one-icon", function () {
         deleteProduct.show();
     });
+
+    $(".action-column").on("click", ".delete-all", function () {
+        deleteAllProduct.show();
+    });
+
+    $("#cancelDelete").on("click", function(){
+        deleteProduct.hide();     
+    });
+    
     
 });

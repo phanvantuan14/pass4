@@ -138,7 +138,12 @@ if (isset($_POST['add-property'])) {
             }
         }
 
-        $conn->commit();
+        $result = $conn->commit();
+        if ($result) {
+            $_SESSION['status'] = "Add property successfuly";
+        } else {
+            $_SESSION['status'] = "Add property faile";
+        }
     } catch (Exception $e) {
         $conn->rollback();
     }
@@ -270,7 +275,6 @@ if (isset($_POST['edit-product'])) {
 if (isset($_POST['click-delete-one-btn'])) {
     $id = $_POST['id'];
 
-
     mysqli_begin_transaction($conn);
 
     try {
@@ -314,6 +318,36 @@ if (isset($_POST['click-delete-one-btn'])) {
 
     exit();
 };
+
+
+//delete all
+if (isset($_POST['delete-all'])){
+    $sql_query = "DELETE FROM products";
+
+    $result = mysqli_query($conn, $sql_query);
+    
+    $sql_gallery = "DELETE FROM  product_gallery";
+    mysqli_query($conn, $sql_gallery);
+
+    $sql_category = "DELETE FROM  product_categories";
+    mysqli_query($conn, $sql_category);
+
+    $sql_tag = "DELETE FROM product_tags";
+    mysqli_query($conn, $sql_tag);
+
+
+    if ($result) {
+        $_SESSION['status'] = "Delete successfuly";
+    } else {
+        $_SESSION['status'] = "Delete faile";
+    }
+
+
+    header("location: index.php");
+    exit();
+} 
+
+
 
 
 //filter product
@@ -401,9 +435,6 @@ if (isset($_GET['filter-product'])) {
         'products' => $products
     ]);
 }
-
-
-
 
 
 // search product

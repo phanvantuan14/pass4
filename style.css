@@ -24,6 +24,14 @@ body {
     
 }
 
+.top-button{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: spacce-between;
+    align-items: center;
+    gap: 10px;
+}
+
 .button {
     margin-right: 10px;
     padding: 10px 20px;
@@ -98,9 +106,6 @@ body {
     font-size: var(--fontSize);
 }
 
-/* .filter-container input[type="date"] {
-    width: 150px;
-} */
 
 .filter-container button {
     padding: 10px 20px;
@@ -135,6 +140,15 @@ th,
 td {
     padding: 10px;
     text-align: left;
+}
+
+table .action-column{
+    display: flex;
+    text-align: center;
+    justify-content: space-around;
+    align-items: center;
+    height: 32px;
+    border: none;
 }
 
 .pagination {
@@ -279,9 +293,12 @@ table:hover i.delete-all {
 }
 
 /* Style cho các nút trong modal */
-#confirmDelete {
-    background-color: #f44336; /* Màu đỏ cho nút xóa */
-    color: white;
+.modal-delete{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.modal-delete button{
     border: none;
     padding: 10px 20px;
     font-size: 16px;
@@ -289,19 +306,18 @@ table:hover i.delete-all {
     cursor: pointer;
     margin-right: 10px;
 }
+.btn-delete{
+    background-color: #f44336; /* Màu đỏ cho nút xóa */
+    color: white;
+}
 
 #cancelDelete {
     background-color: #ccc;
     color: black;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 30px;
+    margin-top: 48px;
 }
 
-#confirmDelete:hover {
+.btn-delete:hover {
     background-color: #d32f2f;
 }
 

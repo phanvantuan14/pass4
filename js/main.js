@@ -1,6 +1,6 @@
 $(document).ready(function () {
     let currentPage = 1; 
-    // let totalPages = 0;
+    let totalPages = 0;
 
     function loadProducts(page) {
         $.ajax({

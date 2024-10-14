@@ -101,7 +101,7 @@ include './util/get-tag-category.php';
                 <input id="priceFrom" name="price_from" placeholder="Price from" type="text" />
                 <input id="priceTo" name="price_to" placeholder="Price to" type="text" />
 
-                <button type="button" id="filterButton">Filter</button>
+                <button  id="filterButton">Filter</button>
             </form>
         </div>
 
@@ -118,7 +118,7 @@ include './util/get-tag-category.php';
                 <th>Gallery</th>
                 <th>Categories</th>
                 <th>Tags</th>
-                <th>
+                <th class="action-column">
                     Action
                     <i class="fas fa-trash-alt delete-all"></i>
                 </th>
@@ -251,17 +251,36 @@ include './util/get-tag-category.php';
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Confirm Delete</h2>
-            <form id="deleteOneProductForm" method="POST" action="core.php">
-                <p>Are you sure you want to delete this product?</p>
-                <input type="hidden" id="product_id" name="id">
-                <button id="confirmDelete">Yes, Delete</button>
+            <div class="modal-delete">
+                <form id="deleteOneProductForm" method="POST" action="core.php">
+                    <p>Are you sure you want to delete this product?</p>
+                    <input type="hidden" id="product_id" name="id">
+                    <button n class="btn-delete" id="confirmDelete">Yes, Delete</button>
+                </form>
                 <button id="cancelDelete">Cancel</button>
-            </form>
+            </div>
         </div>
     </div>
     <!-- End Delete One Product Modal -->
 
-    <script src="./js/main.js"></script>
+    
+    <!-- Delete All Product Modal -->
+    <div class="modal" id="deleteAllProduct">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Delete All</h2>
+            <div class="modal-delete">
+                <form id="deleteAllProductForm" method="POST" action="core.php">
+                    <p>Are you sure you want to delete all product?</p>
+                    <button name="delete-all" class="btn-delete" >Yes, Delete</button>
+                </form>
+                <button id="cancelDelete">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- End Delete All Product Modal -->
+
+    <script type="module" src="./js/main.js"></script>
     <script src="./js/popup.js"></script>
     <script src="./js/edit.js"></script>
     <script src="./js/delete-one.js"></script>
