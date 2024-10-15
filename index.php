@@ -136,6 +136,14 @@ include './util/get-tag-category.php';
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Add New Product</h2>
+            <?php if (isset($_SESSION['errors'])): ?>
+                <div class="error-messages">
+                    <?php foreach ($_SESSION['errors'] as $error): ?>
+                        <p class="error"><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                    <?php unset($_SESSION['errors']);?>
+                </div>
+            <?php endif; ?>
             <form id="addProductForm" method="POST" action="core.php">
                 <label for="sku">SKU:</label>
                 <input type="text" name="sku" required>
@@ -280,12 +288,12 @@ include './util/get-tag-category.php';
     </div>
     <!-- End Delete All Product Modal -->
 
-    <script type="module" src="./js/main.js"></script>
+    <script src="./js/main.js"></script>
     <script src="./js/popup.js"></script>
     <script src="./js/edit.js"></script>
     <script src="./js/delete-one.js"></script>
-    <script src="./js/filter.js"></script>
-    <script src="./js/search.js"></script>
+    <!-- <script src="./js/filter.js"></script> -->
+    <!-- <script src="./js/search.js"></script> -->
 
 </body>
 

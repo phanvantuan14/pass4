@@ -2,54 +2,59 @@ $(document).ready(function () {
     let currentPage = 1; 
     let totalPages = 0;
 
-    function loadProducts(page) {
+    function viewProductList(products) {
+        var html = "";
+        $.each(products, function (index, product) {
+            html += "<tr>";
+            html += "<td>" + product.created_date + "</td>";
+            html += "<td>" + product.title + "</td>";
+            html += "<td>" + product.sku + "</td>";
+            html += "<td>$" + product.price + "</td>";
+            html += "<td><img src='" + product.featured_image + "' height='50' width='100' alt='Feature image'></td>";
+
+            if (product.gallery_images) {
+                var galleryImages = product.gallery_images.split(',');
+                html += "<td>";
+                $.each(galleryImages, function(i, image) {
+                    html += "<img src='" + image + "' height='50' width='50' alt='Gallery image'>";
+                });
+                html += "</td>";
+            } else {
+                html += "<td>No images available</td>";
+            }
+
+            html += "<td>" + product.category_names + "</td>";
+            html += "<td>" + product.tag_names + "</td>";
+
+            html += "<td>";
+            html += '<i class="fas fa-edit edit-btn" data-id="' + product.id + '"></i>';
+            html += '<i class="fas fa-trash-alt delete-one-icon" data-id="' + product.id + '"></i>';
+            html += "</td>";
+            html += "</tr>";
+        });
+
+        $('#productResults').html(html);
+    }
+
+    function loadProducts(page, query = '', formData = {}) {
         $.ajax({
-            url: 'core.php',
+            url: './util/view-product.php',
             type: 'GET',
-            data: {
+            data: $.extend({
                 'view-product': true,
-                'page': page
-            },
+                'page': page,
+                'search': query
+            },{
+                "filter-product": true
+                }, formData
+            ),
             success: function (response) {
-                // console.log(response);
+                console.log(response);
                 const data = JSON.parse(response);
                 const products = data.products;
                 totalPages = data.totalPages;
 
-                var html = "";
-                $.each(products, function (index, product) {
-                    html += "<tr>";
-                    html += "<td>" + product.created_date + "</td>";
-                    html += "<td>" + product.title + "</td>";
-                    html += "<td>" + product.sku + "</td>";
-                    html += "<td>$" + product.price + "</td>";
-                    html += "<td><img src='" + product.featured_image + "' height='50' width='100' alt='Feature image'></td>";
-
-                    // Gallery images (check for null or empty string)
-                    if (product.gallery_images) {
-                        var galleryImages = product.gallery_images.split(',');
-                        html += "<td>";
-                        $.each(galleryImages, function(i, image) {
-                            html += "<img src='" + image + "' height='50' width='50' alt='Gallery image'>";
-                        });
-                        html += "</td>";
-                    } else {
-                        html += "<td>No images available</td>";
-                    }
-
-                    html += "<td>" + product.category_names + "</td>";
-                    html += "<td>" + product.tag_names + "</td>";
-
-                    html += "<td>";
-                    html += '<i class="fas fa-edit edit-btn" data-id="' + product.id + '"></i>';
-                    html += '<i class="fas fa-trash-alt delete-one-icon" data-id="' + product.id + '"></i>';
-                    html += "</td>";
-
-                    html += "</tr>";
-                });
-
-                $('#productResults').html(html);
-
+                viewProductList(products);
                 updatePagination(totalPages, currentPage);
             },
             error: function () {
@@ -58,21 +63,55 @@ $(document).ready(function () {
         });
     }
 
-    function updatePagination(totalPages, currentPage) {
-        $('.pagination').empty(); 
+    function searchProduct(page) {
+        $('#searchInput').on('keyup', function () {
+            const query = $(this).val();
+            if (query !== '') {
+                loadProducts(page, query);
+            } else {
+                loadProducts(page);
+            }
+        });
+    }
 
-        
+    function filterProduct(page) {
+        $("#filterButton").on("click", function(e) {
+            e.preventDefault();
+            let selectedCategories = $('input[name="categories[]"]:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            let selectedTags = $('input[name="tags[]"]:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            let formData = {
+                sort_by: $("#sortByDate").val(),
+                sort_order: $("#sortOrder").val(),
+                categories: selectedCategories, 
+                tags: selectedTags,             
+                date_from: $("#dateFrom").val(),
+                date_to: $("#dateTo").val(),
+                price_from: $("#priceFrom").val(),
+                price_to: $("#priceTo").val()
+            };
+
+            loadProducts(page, '', formData);
+        });
+    }
+
+    function updatePagination(totalPages, currentPage) {
+        $('.pagination').empty();
         $('.pagination').append('<button id="prevPage" ' + (currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>');
 
-        
         for (let i = 1; i <= totalPages; i++) {
             $('.pagination').append('<button class="page-number ' + (i === currentPage ? 'active' : '') + '">' + i + '</button>');
         }
 
-        
         $('.pagination').append('<button id="nextPage" ' + (currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>');
     }
 
+    // Pagination controls
     $(document).on('click', '.page-number', function () {
         currentPage = parseInt($(this).text());
         loadProducts(currentPage);
@@ -85,13 +124,15 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on('click','#nextPage',function () {
-        console.log(currentPage);
+    $(document).on('click','#nextPage', function () {
         if (currentPage < totalPages) {
             currentPage++;
             loadProducts(currentPage);
         }
     });
 
+    // Initial Load
     loadProducts(currentPage);
+    searchProduct(currentPage);
+    filterProduct(currentPage);
 });

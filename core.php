@@ -2,61 +2,44 @@
 session_start();
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 
-//get view prodcut
-if (isset($_GET['view-product'])) {
+function validateData($sku, $title, $price, $featured_image, $gallery_images, $categories, $tags) {
+    $errors = [];
 
-    $itemsPerPage = 5; 
-    $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $offset = ($currentPage - 1) * $itemsPerPage;
-
-    $totalSql = "SELECT COUNT(*) as total FROM products";
-    $totalResult = $conn->query($totalSql);
-    $totalRow = $totalResult->fetch_assoc();
-    $totalProducts = $totalRow['total'];
-    $totalPages = ceil($totalProducts / $itemsPerPage); 
-
-
-    // Truy vấn sản phẩm cho trang hiện tại
-    $sql = "SELECT 
-                p.id,
-                p.sku,
-                p.title,
-                p.price,
-                p.featured_image,
-                p.created_date,
-                GROUP_CONCAT(DISTINCT pg.image) AS gallery_images,
-                GROUP_CONCAT(DISTINCT c.name) AS category_names,
-                GROUP_CONCAT(DISTINCT t.name) AS tag_names
-            FROM products p
-            LEFT JOIN product_gallery pg ON p.id = pg.product_id
-            LEFT JOIN product_categories pc ON p.id = pc.product_id
-            LEFT JOIN categories c ON pc.category_id = c.id
-            LEFT JOIN product_tags pt ON p.id = pt.product_id
-            LEFT JOIN tags t ON pt.tag_id = t.id
-            GROUP BY p.id
-            ORDER BY p.created_date DESC
-            LIMIT $offset, $itemsPerPage";
-
-
-    $result = $conn->query($sql);
-
-    if ($result === false) {
-        echo json_encode(['error' => 'Query failed: ' . $conn->error]);
-        exit;
+    if (empty($sku)) {
+        $errors[] = "SKU is required.";
+    }
+    
+    if (empty($title)) {
+        $errors[] = "Title is required.";
     }
 
-    $products = [];
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $products[] = $row;
+    if (!is_numeric($price) || $price <= 0) {
+        $errors[] = "Price must be a positive number.";
+    }
+
+    if (!filter_var($featured_image, FILTER_VALIDATE_URL)) {
+        $errors[] = "Featured image must be a valid URL.";
+    }
+
+    if (!empty($gallery_images)) {
+        $gallery_images_array = explode(",", $gallery_images);
+        foreach ($gallery_images_array as $image) {
+            if (!filter_var(trim($image), FILTER_VALIDATE_URL)) {
+                $errors[] = "One or more gallery images are not valid URLs.";
+            }
         }
     }
 
-    echo json_encode([
-        'products' => $products,
-        'totalPages' => $totalPages,
-    ]);
-};
+    if (!is_array($categories) || empty($categories)) {
+        $errors[] = "At least one category must be selected.";
+    }
+
+    if (!is_array($tags) || empty($tags)) {
+        $errors[] = "At least one tag must be selected.";
+    }
+
+    return $errors;
+}
 
 
 // add product
@@ -68,7 +51,13 @@ if (isset($_POST['add-product'])) {
     $gallery_images = $_POST["gallery_images"];
     $categories = $_POST["categories"];
     $tags = $_POST["tags"];
+    
+    $validationErrors = validateData($sku, $title, $price, $featured_image, $gallery_images, $categories, $tags);
 
+    if (!empty($validationErrors)) {
+        $_SESSION['errors'] = $validationErrors;
+        exit;
+    }
 
     $sql_query = "INSERT INTO products (sku, title, price, featured_image) 
                 VALUES ('$sku', '$title', '$price', '$featured_image')";
@@ -321,11 +310,11 @@ if (isset($_POST['click-delete-one-btn'])) {
 
 
 //delete all
-if (isset($_POST['delete-all'])){
+if (isset($_POST['delete-all'])) {
     $sql_query = "DELETE FROM products";
 
     $result = mysqli_query($conn, $sql_query);
-    
+
     $sql_gallery = "DELETE FROM  product_gallery";
     mysqli_query($conn, $sql_gallery);
 
@@ -345,132 +334,4 @@ if (isset($_POST['delete-all'])){
 
     header("location: index.php");
     exit();
-} 
-
-
-
-
-//filter product
-if (isset($_GET['filter-product'])) {
-
-    // Nhận giá trị từ formData thông qua AJAX request
-    $sortBy = $_GET['sort_by'] ?? '';
-    $sortOrder = $_GET['sort_order'] ?? 'ASC';
-    $categories = $_GET['categories'] ?? [];
-    $tags = $_GET['tags'] ?? [];
-    $dateFrom = $_GET['date_from'] ?? '';
-    $dateTo = $_GET['date_to'] ?? '';
-    $priceFrom = $_GET['price_from'] ?? '';
-    $priceTo = $_GET['price_to'] ?? '';
-
-    // Câu truy vấn cơ bản
-    $sql = "SELECT 
-                p.id,
-                p.sku,
-                p.title,
-                p.price,
-                p.featured_image,
-                p.created_date,
-                GROUP_CONCAT(DISTINCT pg.image) AS gallery_images,
-                GROUP_CONCAT(DISTINCT c.name) AS category_names,
-                GROUP_CONCAT(DISTINCT t.name) AS tag_names
-            FROM products p
-            LEFT JOIN product_gallery pg ON p.id = pg.product_id
-            LEFT JOIN product_categories pc ON p.id = pc.product_id
-            LEFT JOIN categories c ON pc.category_id = c.id
-            LEFT JOIN product_tags pt ON p.id = pt.product_id
-            LEFT JOIN tags t ON pt.tag_id = t.id
-            WHERE 1=1"; // WHERE 1=1 để dễ dàng thêm các điều kiện lọc sau đó
-
-    if (!empty($categories) && is_array($categories)) {
-        $categories = array_map('intval', $categories); // Chuyển đổi các giá trị thành integer
-        $categoriesList = implode(",", $categories);    // Nối các giá trị thành chuỗi
-        $sql .= " AND c.id IN ($categoriesList)";
-    }
-
-    if (!empty($tags) && is_array($tags)) {
-        $tags = array_map('intval', $tags); // Chuyển đổi các giá trị thành integer
-        $tagsList = implode(",", $tags);    // Nối các giá trị thành chuỗi
-        $sql .= " AND t.id IN ($tagsList)";
-    }
-
-    if (!empty($dateFrom)) {
-        $sql .= " AND p.created_date >= '" . $conn->real_escape_string($dateFrom) . "'";
-    }
-
-    if (!empty($dateTo)) {
-        $sql .= " AND p.created_date <= '" . $conn->real_escape_string($dateTo) . "'";
-    }
-
-    if (!empty($priceFrom)) {
-        $sql .= " AND p.price >= " . (float)$priceFrom;
-    }
-
-    if (!empty($priceTo)) {
-        $sql .= " AND p.price <= " . (float)$priceTo;
-    }
-
-    $allowedSortColumns = ['price', 'created_date', 'title'];
-    if (!in_array($sortBy, $allowedSortColumns)) {
-        $sortBy = 'p.created_date'; 
-    }
-
-    $sql .= " GROUP BY p.id ORDER BY $sortBy $sortOrder";
-
-    $result = $conn->query($sql);
-
-    if ($result === false) {
-        echo json_encode(['error' => 'Query failed: ' . $conn->error]);
-        exit;
-    }
-
-    $products = [];
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $products[] = $row;
-        }
-    }
-
-    echo json_encode([
-        'products' => $products
-    ]);
 }
-
-
-// search product
-if (isset($_GET['search'])) {
-    $searchQuery = $_GET['search'];
-
-    $sql = "SELECT  p.id,
-                    p.sku,
-                    p.title,
-                    p.price,
-                    p.featured_image,
-                    GROUP_CONCAT(DISTINCT pg.image) AS gallery_images,
-                    GROUP_CONCAT(DISTINCT c.name) AS category_names,
-                    GROUP_CONCAT(DISTINCT t.name) AS tag_names,
-                    p.created_date
-                FROM products p
-                LEFT JOIN product_gallery pg ON p.id = pg.product_id
-                LEFT JOIN product_categories pc ON p.id = pc.product_id
-                LEFT JOIN categories c ON pc.category_id = c.id
-                LEFT JOIN product_tags pt ON p.id = pt.product_id
-                LEFT JOIN tags t ON pt.tag_id = t.id
-                WHERE p.title LIKE '%$searchQuery%' 
-                GROUP BY p.id
-                ORDER BY p.created_date DESC
-                LIMIT 5 OFFSET 0;
-            ";
-
-    $result = $conn->query($sql);
-
-    $products = [];
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $products[] = $row;
-        }
-    }
-
-    echo json_encode($products);
-};
-?>

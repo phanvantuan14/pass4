@@ -38,5 +38,23 @@ $(document).ready(function () {
         deleteProduct.hide();     
     });
     
+
+    // filter product
+    $('#categoryDropdown').on('click', function() {
+        $('#categoryCheckboxes').toggle(); 
+    });
+
+    $('#tagDropdown').on('click', function() {
+        $('#tagCheckboxes').toggle(); 
+    });
+
+    $(window).on("click", function (event) {
+        if (!$(event.target).closest("#categoryContainer").length) {
+            $("#categoryCheckboxes").hide();
+        }
+        if (!$(event.target).closest("#tagContainer").length) {
+            $("#tagCheckboxes").hide();
+        }
+    });
     
 });
