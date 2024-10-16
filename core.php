@@ -123,7 +123,7 @@ if (isset($_GET['filter-product'])) {
 
     $allowedSortColumns = ['price', 'created_date', 'title'];
     if (!in_array($sortBy, $allowedSortColumns)) {
-        $sortBy = 'p.created_date'; 
+        $sortBy = 'p.price'; 
     }
 
     $sql .= " GROUP BY p.id ORDER BY $sortBy $sortOrder LIMIT 10 OFFSET 0;";

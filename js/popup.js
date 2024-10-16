@@ -35,7 +35,10 @@ $(document).ready(function () {
     });
 
     $("#cancelDelete").on("click", function(){
-        deleteProduct.hide();     
+        deleteProduct.hide();   
+    });
+    $("#cancelDeleteAll").on("click", function(){
+        deleteAllProduct.hide();  
     });
     
 

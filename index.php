@@ -288,7 +288,7 @@ include './util/get-tag-category.php';
                     <p>Are you sure you want to delete all product?</p>
                     <button name="delete-all" class="btn-delete">Yes, Delete</button>
                 </form>
-                <button id="cancelDelete">Cancel</button>
+                <button id="cancelDeleteAll">Cancel</button>
             </div>
         </div>
     </div>

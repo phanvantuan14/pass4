@@ -3,7 +3,6 @@ $(document).ready(function () {
     let totalPages = 0;
 
     function viewProductList(products) {
-        console.log("view");
         var html = "";
         $.each(products, function (index, product) {
         html += "<tr>";
@@ -12,24 +11,22 @@ $(document).ready(function () {
         html += "<td>" + product.sku + "</td>";
         html += "<td>$" + product.price + "</td>";
         html +=
-            "<td><img src='" +
+            "<td><img  src='" +
             product.featured_image +
             "' height='50' width='100' alt='Feature image'></td>";
 
         // Gallery images (check for null or empty string)
         if (product.gallery_images) {
             var galleryImages = product.gallery_images.split(",");
-            html += "<td>";
+            html += "<td class='gallery-cell'>"; // Thêm lớp để áp dụng CSS
             $.each(galleryImages, function (i, image) {
-            html +=
-                "<img src='" +
-                image +
-                "' height='50' width='50' alt='Gallery image'>";
+                html += "<img src='" + image + "' class='gallery-image' alt='Gallery image'>";
             });
             html += "</td>";
         } else {
             html += "<td>No images available</td>";
         }
+        
 
         html += "<td>" + product.category_names + "</td>";
         html += "<td>" + product.tag_names + "</td>";
