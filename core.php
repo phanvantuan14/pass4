@@ -3,9 +3,9 @@ session_start();
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 include './util/validateData.php';
 
+
+
 $typeValidate = ['add', 'edit'];
-
-
 
 
 //get view prodcut
@@ -13,13 +13,18 @@ if (isset($_GET['view-product'])) {
     $itemsPerPage = 10; 
     $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $offset = ($currentPage - 1) * $itemsPerPage;
-    
+
+    // Tăng giới hạn độ dài của GROUP_CONCAT
+    // $conn->query("SET SESSION group_concat_max_len = 10000000");
+
+    // Lấy tổng số sản phẩm
     $totalSql = "SELECT COUNT(*) as total FROM products";
     $totalResult = $conn->query($totalSql);
     $totalRow = $totalResult->fetch_assoc();
     $totalProducts = $totalRow['total'];
     $totalPages = ceil($totalProducts / $itemsPerPage);
 
+    // Truy vấn sản phẩm với ảnh gallery
     $sql = "SELECT 
                 p.id,
                 p.sku,
@@ -40,7 +45,6 @@ if (isset($_GET['view-product'])) {
             ORDER BY p.created_date DESC
             LIMIT $offset, $itemsPerPage";
 
-
     $result = $conn->query($sql);
 
     if ($result === false) {
@@ -55,11 +59,14 @@ if (isset($_GET['view-product'])) {
         }
     }
 
+    
+
     echo json_encode([
         'products' => $products,
         'totalPages' => $totalPages,
     ]);
 };
+
 
 
 //filter product
@@ -146,6 +153,7 @@ if (isset($_GET['filter-product'])) {
         'products' => $products,
     ]);
 }
+
 
 
 // search product

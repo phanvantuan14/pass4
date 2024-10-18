@@ -60,6 +60,8 @@ $(document).ready(function () {
             const products = data.products;
             totalPages = data.totalPages;
 
+            console.log(products.gallery_images)
+
             viewProductList(products);
             updatePagination(totalPages, currentPage);
         },
@@ -124,17 +126,12 @@ $(document).ready(function () {
             url: "core.php",
             type: "GET",
             data:  $.extend({
-                "filter-product": true,
-                page: page,
+                "filter-product": true
             }, formData),
             success: function (response) {
                 const data = JSON.parse(response);
                 const products = data.products;
-                totalPages = data.totalPages;
 
-                console.log("Parsed products:", products);
-
-                currentPage = 1;
                 viewProductList(products);
             },
             error: function () {
@@ -172,27 +169,35 @@ $(document).ready(function () {
 
     $(document).on("click", ".page-number", function () {
         currentPage = parseInt($(this).text());
-
-        loadProducts(currentPage); 
+            loadProducts(currentPage); 
+            if(isFilter){
+                filterProduct(currentPage);
+            }
     });
 
     $(document).on("click", "#prevPage", function () {
         if (currentPage > 1) {
-        currentPage--;
-        loadProducts(currentPage);
+            currentPage--;
+            loadProducts(currentPage);
+            if(isFilter){
+                filterProduct(currentPage);
+            }
         }
     });
 
     $(document).on("click", "#nextPage", function () {
         if (currentPage < totalPages) {
-        currentPage++;
+            currentPage++;
 
-        loadProducts(currentPage); 
+            loadProducts(currentPage); 
+            if(isFilter){
+                filterProduct(currentPage);
+            }
         }
     });
 
     loadProducts(currentPage);
-    filterProduct(currentPage);
+    filterProduct();
     searchProduct();
 });
 

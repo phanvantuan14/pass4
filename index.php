@@ -54,7 +54,7 @@ include './util/get-tag-category.php';
                     </button>
 
                     <button class="button">
-                        Sync from VillaTheme
+                        <a href="./viewAliexpress.html"> Sync from VillaTheme</a>
                     </button>
                 </div>
                 <div class="search-container">
