@@ -157,7 +157,6 @@ td {
     text-align: left;
     max-width: 150px; 
     overflow-wrap: break-word;
-    overflow: hidden;
 }
 
 
@@ -166,23 +165,20 @@ table .action-column{
     text-align: center;
     justify-content: space-around;
     align-items: center;
-    height: 32px;
+    /* height: 32px; */
     border: none;
 }
 
 .gallery-cell {
     display: flex; 
-    gap: 5px;
-    max-width: 200px;
-    overflow: hidden; 
+    gap: 4px;
 }
 
-.gallery-image {
-    height: 50px; 
-    width: auto; 
+.gallery-cell .gallery-img{
+    height: 50px;
+    width: auto;
+    text-align: center;
 }
-
-
 
 .pagination {
     display: flex;
@@ -238,7 +234,7 @@ table:hover i.delete-all {
 
 .modal-content {
     background-color: #fff; 
-    margin: 10% auto; 
+    margin: 2% auto; 
     padding: 40px;
     border-radius: 8px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
@@ -265,6 +261,7 @@ table:hover i.delete-all {
 }
 
 
+
 .modal label {
     display: block; 
     margin: 15px 0 5px; 
@@ -272,11 +269,10 @@ table:hover i.delete-all {
 }
 
 .modal input[type="text"] {
-    width: 100%; 
+    width: 96%; 
     padding: 10px; 
     border: 1px solid #ccc; 
     border-radius: 5px; 
-    box-sizing: border-box; 
     margin-bottom: 20px; 
 }
 
@@ -389,3 +385,7 @@ table:hover i.delete-all {
 .alert-danger span {
     font-size: var(--fontSize);
 }
+
+
+/* view aliexpress */
+

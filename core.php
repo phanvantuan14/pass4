@@ -205,11 +205,11 @@ if (isset($_POST['add-product'])) {
     $title = trim($_POST["title"]);
     $price = trim($_POST["price"]);
     $featured_image = trim($_POST["featured_image"]);
-    $gallery_images = trim($_POST["gallery_images"]);
+    $gallery_images = $_POST["gallery_images"];
     $categories = $_POST["categories"];
     $tags = $_POST["tags"];
     
-    $errors = validateProduct($conn, $sku, $title, $price, $featured_image, $typeValidate[0]);
+    $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[0]);
 
     if (!empty($errors)) {
         $_SESSION['errors'] = $errors;
@@ -218,6 +218,8 @@ if (isset($_POST['add-product'])) {
         exit;
     }
 
+
+    
     $sql_query = "INSERT INTO products (sku, title, price, featured_image) 
                 VALUES ('$sku', '$title', '$price', '$featured_image')";
     $result = mysqli_query($conn, $sql_query);
@@ -310,7 +312,7 @@ if (isset($_POST['add-property'])) {
 
 //get data to form update product
 if (isset($_POST['click-edit-btn'])) {
-    $id = mysqli_real_escape_string($conn, $_POST['id']); // Tránh SQL injection
+    $id = mysqli_real_escape_string($conn, $_POST['id']); 
     $sql_query = "SELECT p.id, p.sku, p.title, p.price, p.featured_image, 
             GROUP_CONCAT(DISTINCT c.id) AS category_ids,
             GROUP_CONCAT(DISTINCT t.id) AS tag_ids,
@@ -365,11 +367,11 @@ if (isset($_POST['edit-product'])) {
     $title = trim($_POST["title"]);
     $price = trim($_POST["price"]);
     $featured_image = trim($_POST["featured_image"]);
-    $gallery_images = trim($_POST["gallery_images"]);
+    $gallery_images = $_POST["gallery_images"];
     $categories = $_POST["categories"];
     $tags = $_POST["tags"];
 
-    $errors = validateProduct($conn, $sku, $title, $price, $featured_image, $typeValidate[1]);
+    $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[1]);
 
     if (!empty($errors)) {
         $_SESSION['errors'] = $errors;

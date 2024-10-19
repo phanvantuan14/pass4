@@ -1,31 +1,34 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <title>Product Info</title>
-    <script>
-        $(document).ready(function() {
-            // Sử dụng AJAX để gọi đến file PHP
-            $.ajax({
-                url: 'http://localhost/php/pass4-read/server-proxy.php', // Đường dẫn đến file PHP
-                type: 'GET',
-                success: function(response) {
-            
-                    $('#demo').html(response);
-                },
-                error: function() {
-                    alert('Error occurred while fetching the product info.');
-                }
-            });
-        });
-    </script>
+    <title>Product In Aliexpress</title>
+    
 </head>
+
 <body>
-    <button><a href="./index.php">GO HOME</a></button>
-    <h1>GET Product Info</h1>
+    <h1>GET Product In Aliexpress</h1>
     <p id="demo">Loading product info...</p>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>SKU</th>
+                <th>Product name</th>
+                <th>Price</th>
+                <th>Feature Image</th>
+                <th>Color</th>
+                <th>Size</th>
+            </tr>
+        </thead>
+        <tbody id="productResults"></tbody>
+    </table>
+
+    <script src="./js/get-data-aliexpress.js"></script>
 </body>
+
 </html>

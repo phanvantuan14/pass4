@@ -53,7 +53,7 @@ include './util/get-tag-category.php';
                         Add property
                     </button>
 
-                    <button class="button">
+                    <button class="button button-get-data">
                         <a href="./viewAliexpress.html"> Sync from VillaTheme</a>
                     </button>
                 </div>
@@ -159,11 +159,13 @@ include './util/get-tag-category.php';
                 <label for="price">Price:</label>
                 <input type="text" name="price" required>
 
-                <label for="featured_image">Feature Image URL:</label>
-                <input type="text" name="featured_image" required>
+                <label for="featured_image">Feature Image URL or Upload:</label>
+                <input type="text" name="featured_image">
+                <input type="file" name="featured_image_file" accept="image/*">
 
-                <label for="gallery_images">Gallery Images (URLs, separated by commas):</label>
+                <label for="gallery_images">Gallery Images (URLs, separated by commas) or Upload:</label>
                 <input type="text" name="gallery_images">
+                <input type="file" name="gallery_images_file[]" accept="image/*" multiple>
 
                 <label for="categories">Categories:</label>
                 <?php foreach ($categories_list as $category): ?>
@@ -294,32 +296,12 @@ include './util/get-tag-category.php';
     </div>
     <!-- End Delete All Product Modal -->
 
-    <!-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            <?php if (isset($_SESSION['show_modal'])): ?>
-                document.getElementById('addProductModal').style.display = 'block';
-                <?php unset($_SESSION['show_modal']); ?>
-            <?php endif; ?>
-            // <?php if (isset($_SESSION['show_modal_edit'])): ?>
-            //     document.getElementById('editProductModal').style.display = 'block';
-            //     <?php unset($_SESSION['show_modal_edit']); ?>
-            // <?php endif; ?>
-
-            // Close modal when clicking on the close button
-            document.querySelector(".close").addEventListener("click", function() {
-                document.getElementById('addProductModal').style.display = 'none';
-                document.getElementById('editProductModal').style.display = 'none';
-            });
-        });
-    </script> -->
 
 
     <script src="./js/main.js"></script>
     <script src="./js/popup.js"></script>
     <script src="./js/edit.js"></script>
     <script src="./js/delete-one.js"></script>
-    <!-- <script src="./js/filter.js"></script> -->
-    <!-- <script src="./js/search.js"></script> -->
 
 </body>
 

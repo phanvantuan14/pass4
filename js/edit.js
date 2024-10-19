@@ -10,7 +10,7 @@ $(document).ready(function (){
                 'click-edit-btn': true,
                 id: productId 
             },
-            dataType: 'json', // Chắc chắn nhận về JSON
+            dataType: 'json',
             success: function (data) {
 
                 if (data) {

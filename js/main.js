@@ -13,15 +13,16 @@ $(document).ready(function () {
         html +=
             "<td><img  src='" +
             product.featured_image +
-            "' height='50' width='100' alt='Feature image'></td>";
+            "' height='50' width='100%' alt='Feature image'></td>";
 
-        // Gallery images (check for null or empty string)
         if (product.gallery_images) {
             var galleryImages = product.gallery_images.split(",");
-            html += "<td class='gallery-cell'>"; // Thêm lớp để áp dụng CSS
-            $.each(galleryImages, function (i, image) {
-                html += "<img src='" + image + "' class='gallery-image' alt='Gallery image'>";
-            });
+            html += "<td>";
+                html += "<div class='gallery-cell'>"
+                $.each(galleryImages, function (i, image) {
+                    html += "<img src='" + image + "' class= 'gallery-img' alt='Gallery image'>";
+                });
+                html += "</div>"
             html += "</td>";
         } else {
             html += "<td>No images available</td>";
@@ -55,12 +56,9 @@ $(document).ready(function () {
             page: page,
         },
         success: function (response) {
-            console.log(response);
             const data = JSON.parse(response);
             const products = data.products;
             totalPages = data.totalPages;
-
-            console.log(products.gallery_images)
 
             viewProductList(products);
             updatePagination(totalPages, currentPage);
@@ -170,18 +168,12 @@ $(document).ready(function () {
     $(document).on("click", ".page-number", function () {
         currentPage = parseInt($(this).text());
             loadProducts(currentPage); 
-            if(isFilter){
-                filterProduct(currentPage);
-            }
     });
 
     $(document).on("click", "#prevPage", function () {
         if (currentPage > 1) {
             currentPage--;
             loadProducts(currentPage);
-            if(isFilter){
-                filterProduct(currentPage);
-            }
         }
     });
 
@@ -190,9 +182,6 @@ $(document).ready(function () {
             currentPage++;
 
             loadProducts(currentPage); 
-            if(isFilter){
-                filterProduct(currentPage);
-            }
         }
     });
 
@@ -216,6 +205,6 @@ window.onload = function() {
     if (status) {
         setTimeout(function() {
             status.style.display = 'none'; 
-        }, 3000);
+        }, 5000);
     }
 };

@@ -1,6 +1,6 @@
 <?php 
 
-function validateProduct($conn, $sku, $title, $price, $featured_image, $type) {
+function validateProduct($conn, $sku, $title, $price, $type) {
     // Mảng chứa lỗi
     $errors = [];
 
@@ -26,11 +26,11 @@ function validateProduct($conn, $sku, $title, $price, $featured_image, $type) {
     }
 
     // Validate featured_image
-    if (empty($featured_image)) {
-        $errors[] = "Featured image is required.";
-    } elseif (!filter_var($featured_image, FILTER_VALIDATE_URL)) {
-        $errors[] = "Featured image must be a valid URL.";
-    }
+    // if (empty($featured_image)) {
+    //     $errors[] = "Featured image is required.";
+    // } elseif (!filter_var($featured_image, FILTER_VALIDATE_URL)) {
+    //     $errors[] = "Featured image must be a valid URL.";
+    // }
 
 
 
