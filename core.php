@@ -391,124 +391,45 @@ if (isset($_POST['click-edit-btn'])) {
 }
 
 
-
-//update product
-// if (isset($_POST['edit-product'])) {
-
-//     $id = $_POST['id'];
-//     $sku = trim($_POST["sku"]); 
-
-//     if (empty($sku)) {
-//         $sql_sku = "SELECT p.sku FROM products p WHERE id = '$id'";
-//         $result = mysqli_query($conn, $sql_sku);
-        
-//         if ($result && mysqli_num_rows($result) > 0) {
-//             $row = mysqli_fetch_assoc($result);
-//             $sku = $row['sku']; 
-//         } else {
-//             $sku = null; 
-//         }
-//     }
-
-//     $title = trim($_POST["title"]);
-//     $price = trim($_POST["price"]);
-//     $featured_image = trim($_POST["featured_image_file"]);
-//     $gallery_images = $_POST["gallery_images_file"];
-//     $categories = $_POST["categories"];
-//     $tags = $_POST["tags"];
-
-//     $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[1]);
-
-//     if (!empty($errors)) {
-//         $_SESSION['errors'] = $errors;
-//         $_SESSION['show_modal'] = true;
-//         header("location: index.php");
-//         exit;
-//     }
-
-
-//     $sql_update_product = "UPDATE products SET sku = '$sku', title = '$title', price = '$price', featured_image = '$featured_image' WHERE id = $id";
-//     mysqli_query($conn, $sql_update_product);
-//     if (mysqli_error($conn)) {
-//         error_log("Error updating product: " . mysqli_error($conn));
-//     }
-
-
-//     $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
-//     mysqli_query($conn, $sql_delete_gallery);
-//     if (mysqli_error($conn)) {
-//         error_log("Error deleting gallery: " . mysqli_error($conn));
-//     }
-
-
-//     $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
-//     mysqli_query($conn, $sql_delete_categories);
-//     if (mysqli_error($conn)) {
-//         error_log("Error deleting categories: " . mysqli_error($conn));
-//     }
-
-
-//     $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
-//     mysqli_query($conn, $sql_delete_tags);
-//     if (mysqli_error($conn)) {
-//         error_log("Error deleting tags: " . mysqli_error($conn));
-//     }
-
-
-//     $gallery_images_array = explode(",", $gallery_images);
-//     foreach ($gallery_images_array as $image) {
-//         $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
-//                         VALUES ('$id', '$image')";
-//         mysqli_query($conn, $sql_gallery);
-//         if (mysqli_error($conn)) {
-//             error_log("Error inserting gallery image: " . mysqli_error($conn));
-//         }
-//     }
-
-
-//     foreach ($categories as $category_id) {
-//         $sql_category = "INSERT INTO product_categories (product_id, category_id) 
-//                         VALUES ('$id', '$category_id')";
-//         mysqli_query($conn, $sql_category);
-//         if (mysqli_error($conn)) {
-//             error_log("Error inserting category: " . mysqli_error($conn));
-//         }
-//     }
-
-
-//     foreach ($tags as $tag_id) {
-//         $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
-//                     VALUES ('$id', '$tag_id')";
-//         mysqli_query($conn, $sql_tag);
-//         if (mysqli_error($conn)) {
-//             error_log("Error inserting tag: " . mysqli_error($conn));
-//         }
-//     }
-
-//     if (mysqli_affected_rows($conn) > 0) {
-//         $_SESSION['status'] = "Product updated successfully";
-//     } else {
-//         $_SESSION['status'] = "Failed to update product";
-//     }
-
-//     header("location: index.php");
-//     exit();
-// };
+// update product
 if (isset($_POST['edit-product'])) {
 
     $id = $_POST['id'];
     $sku = trim($_POST["sku"]); 
+
+    if (empty($sku)) {
+        $sql_sku = "SELECT p.sku FROM products p WHERE id = '$id'";
+        $result = mysqli_query($conn, $sql_sku);
+        
+        if ($result && mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
+            $sku = $row['sku']; 
+        } else {
+            $sku = null; 
+        }
+    }
+
     $title = trim($_POST["title"]);
     $price = trim($_POST["price"]);
+    $featured_image = trim($_POST["featured_image_file"]);
+    $gallery_images = $_POST["gallery_images_file"];
+    $categories = $_POST["categories"];
+    $tags = $_POST["tags"];
 
-    // Kiểm tra và xử lý ảnh chính (featured_image)
+    $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[1]);
+
+    if (!empty($errors)) {
+        $_SESSION['errors'] = $errors;
+        $_SESSION['show_modal'] = true;
+        header("location: index.php");
+        exit;
+    }
+
     if (isset($_FILES['featured_image_file']) && $_FILES['featured_image_file']['error'] == UPLOAD_ERR_OK) {
         $featured_image_name = basename($_FILES['featured_image_file']['name']);
         $featured_image_target = "./uploads/" . $featured_image_name;
-        
-        // Di chuyển ảnh tải lên thư mục
+
         if (move_uploaded_file($_FILES['featured_image_file']['tmp_name'], $featured_image_target)) {
-            // Cập nhật đường dẫn ảnh vào CSDL
             $sql_update_product = "UPDATE products SET featured_image = '$featured_image_name' WHERE id = $id";
             mysqli_query($conn, $sql_update_product);
         } else {
@@ -516,45 +437,90 @@ if (isset($_POST['edit-product'])) {
         }
     }
 
-    // Xử lý gallery images
-    if (isset($_FILES['gallery_images_file']) && count($_FILES['gallery_images_file']['name']) > 0) {
-        // Xóa ảnh gallery cũ trong CSDL
-        $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
-        mysqli_query($conn, $sql_delete_gallery);
-
-        // Thêm ảnh gallery mới
-        foreach ($_FILES['gallery_images_file']['name'] as $key => $gallery_image_name) {
-            $gallery_image_target = "./uploads/" . basename($gallery_image_name);
-            if (move_uploaded_file($_FILES['gallery_images_file']['tmp_name'][$key], $gallery_image_target)) {
-                $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
-                                VALUES ('$id', '$gallery_image_name')";
-                mysqli_query($conn, $sql_gallery);
-            } else {
-                error_log("Error uploading gallery image: " . $gallery_image_name);
+    if (isset($_FILES['gallery_images_file-edit'])) {
+        echo '<pre>';
+        print_r($_FILES['gallery_images_file-edit']);
+        echo '</pre>';
+    }
+        
+    if (isset($_FILES['gallery_images_file-edit']) && count($_FILES['gallery_images_file-edit']['name']) > 0) {
+        // Kiểm tra xem có ít nhất một file hợp lệ không
+        $hasNewFiles = false;
+        foreach ($_FILES['gallery_images_file-edit']['name'] as $key => $gallery_image_name) {
+            // Kiểm tra nếu tên file không rỗng và không có lỗi
+            if (!empty($gallery_image_name) && $_FILES['gallery_images_file-edit']['error'][$key] === UPLOAD_ERR_OK) {
+                $hasNewFiles = true;
+                break;
+            }
+        }
+    
+        if ($hasNewFiles) {
+            // Nếu có ít nhất một hình ảnh mới, xóa hình ảnh cũ
+            $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
+            mysqli_query($conn, $sql_delete_gallery);
+    
+            foreach ($_FILES['gallery_images_file-edit']['name'] as $key => $gallery_image_name) {
+                // Kiểm tra lỗi tải lên
+                if ($_FILES['gallery_images_file-edit']['error'][$key] === UPLOAD_ERR_OK) {
+                    $gallery_image_target = "./uploads/" . basename($gallery_image_name);
+                    if (move_uploaded_file($_FILES['gallery_images_file-edit']['tmp_name'][$key], $gallery_image_target)) {
+                        // Thêm hình ảnh mới vào cơ sở dữ liệu
+                        $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
+                                        VALUES ('$id', '$gallery_image_name')";
+                        mysqli_query($conn, $sql_gallery);
+                    } else {
+                        error_log("Error uploading gallery image: " . $gallery_image_name);
+                    }
+                } else {
+                    error_log("Error with file upload: " . $_FILES['gallery_images_file-edit']['error'][$key]);
+                }
             }
         }
     }
+    
+    
 
-    // Cập nhật các thông tin khác (SKU, title, price)
-    $sql_update_product_info = "UPDATE products SET sku = '$sku', title = '$title', price = '$price' WHERE id = $id";
-    mysqli_query($conn, $sql_update_product_info);
 
-    // Xóa và thêm lại danh mục và tags
+    // Update product details
+    $sql_update_product = "UPDATE products SET sku = '$sku', title = '$title', price = '$price' WHERE id = $id";
+    mysqli_query($conn, $sql_update_product);
+    if (mysqli_error($conn)) {
+        error_log("Error updating product: " . mysqli_error($conn));
+    }
+
+    // Update categories
     $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_categories);
-    foreach ($categories as $category_id) {
-        $sql_category = "INSERT INTO product_categories (product_id, category_id) VALUES ('$id', '$category_id')";
-        mysqli_query($conn, $sql_category);
+    if (mysqli_error($conn)) {
+        error_log("Error deleting categories: " . mysqli_error($conn));
     }
 
+    foreach ($categories as $category_id) {
+        $sql_category = "INSERT INTO product_categories (product_id, category_id) 
+                        VALUES ('$id', '$category_id')";
+        mysqli_query($conn, $sql_category);
+        if (mysqli_error($conn)) {
+            error_log("Error inserting category: " . mysqli_error($conn));
+        }
+    }
+
+    // Update tags
     $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_tags);
-    foreach ($tags as $tag_id) {
-        $sql_tag = "INSERT INTO product_tags (product_id, tag_id) VALUES ('$id', '$tag_id')";
-        mysqli_query($conn, $sql_tag);
+    if (mysqli_error($conn)) {
+        error_log("Error deleting tags: " . mysqli_error($conn));
     }
 
-    // Thông báo kết quả
+    foreach ($tags as $tag_id) {
+        $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
+                    VALUES ('$id', '$tag_id')";
+        mysqli_query($conn, $sql_tag);
+        if (mysqli_error($conn)) {
+            error_log("Error inserting tag: " . mysqli_error($conn));
+        }
+    }
+
+    // Feedback to user
     if (mysqli_affected_rows($conn) > 0) {
         $_SESSION['status'] = "Product updated successfully";
     } else {
@@ -564,6 +530,7 @@ if (isset($_POST['edit-product'])) {
     header("location: index.php");
     exit();
 }
+
 
 
 

@@ -64,7 +64,7 @@ include './util/get-tag-category.php';
 
             <!-- Filter product -->
             <div class="filter-container">
-                <form id="filterForm">
+                <form id="filterForm" method="GET"  action="core.php">
 
                     <select id="sortByDate" name="sort_by">
                         <option value="date">Date</option>
@@ -119,28 +119,31 @@ include './util/get-tag-category.php';
 
         </section>
 
-        <table id="productTable">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Product name</th>
-                    <th>SKU</th>
-                    <th>Price</th>
-                    <th>Feature Image</th>
-                    <th>Gallery</th>
-                    <th>Categories</th>
-                    <th>Tags</th>
-                    <th class="action-column">
-                        Action
-                        <i class="fas fa-trash-alt delete-all"></i>
-                    </th>
-                </tr>
-            </thead>
-            <tbody id="productResults"></tbody>
-        </table>
-
+        <section class="content-table">
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Product name</th>
+                        <th>SKU</th>
+                        <th>Price</th>
+                        <th>Feature Image</th>
+                        <th>Gallery</th>
+                        <th>Categories</th>
+                        <th>Tags</th>
+                        <th class="action-column">
+                            Action
+                            <i class="fas fa-trash-alt delete-all"></i>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="productResults"></tbody>
+            </table>
+        </section>
         <div class="pagination">
         </div>
+        
+        
     </div>
 
 
@@ -250,30 +253,30 @@ include './util/get-tag-category.php';
                 <label for="gallery_images">Gallery Images:</label>
                 <div class="gallery_images_parent">
                     <div id="gallery_images_preview-edit"></div>
-                    <input type="file" id="gallery_images_file-edit" name="gallery_images_file[]" accept="image/*" multiple>
+                    <input type="file" id="gallery_images_file-edit" name="gallery_images_file-edit[]" accept="image/*" multiple>
                 </div>
 
-            <div class="content_categori-tag">
-                <div class="categories-container">
-                    <label for="categories">Categories:</label>
-                    <?php foreach ($categories_list as $category): ?>
-                        <div>
-                            <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
-                            <?php echo htmlspecialchars($category['name']); ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+                <div class="content_categori-tag">
+                    <div class="categories-container">
+                        <label for="categories">Categories:</label>
+                        <?php foreach ($categories_list as $category): ?>
+                            <div>
+                                <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
+                                <?php echo htmlspecialchars($category['name']); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
 
-                <div class="tags-container">
-                    <label for="tags">Tags:</label>
-                    <?php foreach ($tags_list as $tag): ?>
-                        <div>
-                            <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
-                            <?php echo htmlspecialchars($tag['name']); ?>
-                        </div>
-                    <?php endforeach; ?>
+                    <div class="tags-container">
+                        <label for="tags">Tags:</label>
+                        <?php foreach ($tags_list as $tag): ?>
+                            <div>
+                                <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
+                                <?php echo htmlspecialchars($tag['name']); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </div>
 
                 <button name="edit-product" type="submit">Update Changes</button>
             </form>
@@ -320,7 +323,7 @@ include './util/get-tag-category.php';
 
     <script src="./js/main.js"></script>
     <script src="./js/popup.js"></script>
-    <script src="./js/edit.js"></script>
+    <script src="./js/get-data-edit.js"></script>
     <script src="./js/delete-one.js"></script>
     <script src="./js/read-file-image.js"></script>
 

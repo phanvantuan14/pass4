@@ -7,6 +7,7 @@ $(document).ready(function () {
       if (response.sizes.length === 0) {
         window.location.reload();
       }
+
       console.log(response);
 
       let id = 1;

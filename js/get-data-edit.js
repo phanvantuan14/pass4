@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $("#productResults").on("click", ".edit-btn", function () {
+  $(".productResults").on("click", ".edit-btn", function () {
     const productId = $(this).data("id");
     if (!productId) return;
 
@@ -67,5 +67,23 @@ $(document).ready(function () {
         alert("Đã xảy ra lỗi khi lấy thông tin sản phẩm.");
       },
     });
+  });
+
+  const editProduct = $("#editProductModal");
+  $(".close").on("click", function () {
+    editProduct.hide();
+
+    $("#product_id").val("");
+    $("#sku").val("");
+    $("#title").val("");
+    $("#price").val("");
+    $("#featured_image_preview-edit").hide().attr("src", "");
+    $(".featured_image_title").val("");
+    $("#gallery_images_preview-edit").empty();
+    $(".featured_image_num").val(0);
+
+    // Bỏ chọn tất cả các category và tag
+    $('input[name="categories[]"]').prop("checked", false);
+    $('input[name="tags[]"]').prop("checked", false);
   });
 });

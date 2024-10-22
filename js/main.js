@@ -5,8 +5,6 @@ $(document).ready(function () {
   let isFilter = false;
 
   function viewProductList(products) {
-    console.log(products);
-
     let html = "";
 
     $.each(products, function (index, product) {
@@ -42,7 +40,7 @@ $(document).ready(function () {
       html += "<td>" + product.category_names + "</td>";
       html += "<td>" + product.tag_names + "</td>";
       html +=
-        "<td><i class='fas fa-edit edit-btn' data-id='" +
+        "<td class='center-column'><i class='fas fa-edit edit-btn' data-id='" +
         product.id +
         "'></i> <i class='fas fa-trash-alt delete-one-icon' data-id='" +
         product.id +
@@ -50,7 +48,7 @@ $(document).ready(function () {
       html += "</tr>";
     });
 
-    $("#productResults").html(html);
+    $(".productResults").html(html);
   }
 
   function loadProducts(currentPage) {
@@ -99,7 +97,7 @@ $(document).ready(function () {
         });
       } else {
         $("#searchResults").html("");
-        loadProducts();
+        loadProducts(currentPage);
       }
     });
   }
@@ -141,6 +139,8 @@ $(document).ready(function () {
       price_to: priceTo,
       page: currentPage,
     };
+
+    console.log(formData);
 
     $.ajax({
       url: "core.php",
