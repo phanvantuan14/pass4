@@ -17,13 +17,11 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 if (typeof data === "string") {
-                data = JSON.parse(data);
+                    data = JSON.parse(data);
                 }
                 if (data.success) {
-                location.reload();
-                } else {
-                alert(data.message);
-                }
+                    location.reload();
+                } 
             },
             error: function () {
                 alert("Error occurred while deleting the product.");

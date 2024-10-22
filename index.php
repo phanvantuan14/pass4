@@ -95,7 +95,7 @@ include './util/get-tag-category.php';
                     <!-- Tag selection -->
                     <div id="tagContainer">
                         <div id="tagDropdown">
-                            <span value="">Select tag</span>
+                            <span value="">Tag</span>
                             <i class="fa-solid fa-chevron-down"></i>
                         </div>
                         <div id="tagCheckboxes">
@@ -149,7 +149,7 @@ include './util/get-tag-category.php';
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Add New Product</h2>
-            <form id="addProductForm" method="POST" action="core.php">
+            <form id="addProductForm" method="POST" action="core.php" enctype="multipart/form-data" >
                 <label for="sku">SKU:</label>
                 <input type="text" name="sku">
 
@@ -159,31 +159,39 @@ include './util/get-tag-category.php';
                 <label for="price">Price:</label>
                 <input type="text" name="price" required>
 
-                <label for="featured_image">Feature Image URL or Upload:</label>
-                <input type="text" name="featured_image">
-                <input type="file" name="featured_image_file" accept="image/*">
+                <label for="featured_image">Feature Image:</label>
+                <div class="featured_image_parent">
+                    <img id="featured_image_preview" src="">
+                    <input type="file" id="featured_image_file" name="featured_image_file" accept="image/*">
+                </div>
 
-                <label for="gallery_images">Gallery Images (URLs, separated by commas) or Upload:</label>
-                <input type="text" name="gallery_images">
-                <input type="file" name="gallery_images_file[]" accept="image/*" multiple>
+                <label for="gallery_images">Gallery Images:</label>
+                <div class="gallery_images_parent">
+                    <div id="gallery_images_preview"></div>
+                    <input type="file" id="gallery_images_file" name="gallery_images_file[]" accept="image/*" multiple>
+                </div>
 
-                <label for="categories">Categories:</label>
-                <?php foreach ($categories_list as $category): ?>
-                    <div>
-                        <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
-                        <?php echo $category['name']; ?>
+                <div class="content_categori-tag">
+                    <div class="categories-container">
+                        <label for="categories">Categories:</label>
+                        <?php foreach ($categories_list as $category): ?>
+                            <div>
+                                <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
+                                <?php echo $category['name']; ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
-
-
-                <label for="tags">Tags:</label>
-                <?php foreach ($tags_list as $tag): ?>
-                    <div>
-                        <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
-                        <?php echo $tag['name']; ?>
+                    <div class="tags-container">
+                        <label for="tags">Tags:</label>
+                        <?php foreach ($tags_list as $tag): ?>
+                                <div>
+                                    <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
+                                <?php echo $tag['name']; ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
-
+                </div>
+                
 
                 <button name="add-product" type="submit">Add Product</button>
             </form>
@@ -220,7 +228,7 @@ include './util/get-tag-category.php';
             <span class="close">&times;</span>
             <h2>Edit Product</h2>
 
-            <form id="editProductForm" method="POST" action="core.php">
+            <form id="editProductForm" method="POST" action="core.php"  enctype="multipart/form-data">
 
                 <input type="hidden" id="product_id" name="id">
 
@@ -233,27 +241,39 @@ include './util/get-tag-category.php';
                 <label for="price">Price:</label>
                 <input type="text" id="price" name="price" required>
 
-                <label for="featured_image">Feature Image URL:</label>
-                <input type="text" id="featured_image" name="featured_image" required>
+                <label for="featured_image">Feature Image:</label>
+                <div class="featured_image_parent">
+                    <img id="featured_image_preview-edit" src="">
+                    <input type="file" id="featured_image_file-edit" name="featured_image_file" accept="image/*">
+                </div>
 
                 <label for="gallery_images">Gallery Images:</label>
-                <input type="text" id="gallery_images" name="gallery_images">
+                <div class="gallery_images_parent">
+                    <div id="gallery_images_preview-edit"></div>
+                    <input type="file" id="gallery_images_file-edit" name="gallery_images_file[]" accept="image/*" multiple>
+                </div>
 
-                <label for="categories">Categories:</label>
-                <?php foreach ($categories_list as $category): ?>
-                    <div>
-                        <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
-                        <?php echo htmlspecialchars($category['name']); ?>
-                    </div>
-                <?php endforeach; ?>
+            <div class="content_categori-tag">
+                <div class="categories-container">
+                    <label for="categories">Categories:</label>
+                    <?php foreach ($categories_list as $category): ?>
+                        <div>
+                            <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
+                            <?php echo htmlspecialchars($category['name']); ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
 
-                <label for="tags">Tags:</label>
-                <?php foreach ($tags_list as $tag): ?>
-                    <div>
-                        <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
-                        <?php echo htmlspecialchars($tag['name']); ?>
-                    </div>
-                <?php endforeach; ?>
+                <div class="tags-container">
+                    <label for="tags">Tags:</label>
+                    <?php foreach ($tags_list as $tag): ?>
+                        <div>
+                            <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
+                            <?php echo htmlspecialchars($tag['name']); ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
 
                 <button name="edit-product" type="submit">Update Changes</button>
             </form>
@@ -302,6 +322,10 @@ include './util/get-tag-category.php';
     <script src="./js/popup.js"></script>
     <script src="./js/edit.js"></script>
     <script src="./js/delete-one.js"></script>
+    <script src="./js/read-file-image.js"></script>
+
+    
+    </script>
 
 </body>
 
