@@ -1,6 +1,6 @@
 $(document).ready(function () {
   $.ajax({
-    url: "http://localhost/php/pass4-read/server-proxy.php",
+    url: "./server-proxy.php",
     type: "GET",
     dataType: "json",
     success: function (response) {

@@ -110,8 +110,8 @@ include './util/get-tag-category.php';
 
                     <input id="dateFrom" name="date_from" placeholder="mm/dd/yyyy" type="date" />
                     <input id="dateTo" name="date_to" placeholder="mm/dd/yyyy" type="date" />
-                    <input id="priceFrom" name="price_from" placeholder="Price from" type="text" />
-                    <input id="priceTo" name="price_to" placeholder="Price to" type="text" />
+                    <input id="priceFrom" name="price_from" placeholder="Price from" type="number" />
+                    <input id="priceTo" name="price_to" placeholder="Price to" type="number" />
 
                     <button id="filterButton">Filter</button>
                 </form>

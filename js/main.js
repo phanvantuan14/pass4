@@ -140,7 +140,20 @@ $(document).ready(function () {
       page: currentPage,
     };
 
-    console.log(formData);
+    if (formData.sort_by === "date" && formData.sort_order === "DESC") {
+      if (
+        formData.categories.length === 0 &&
+        formData.tags.length === 0 &&
+        formData.date_from === "" &&
+        formData.date_to === "" &&
+        formData.price_from === "" &&
+        formData.price_to === "" &&
+        formData.page === 1
+      ) {
+        isFilter = false;
+        loadProducts(formData.currentPage);
+      }
+    }
 
     $.ajax({
       url: "core.php",
@@ -296,7 +309,7 @@ window.onload = function () {
 
     setTimeout(function () {
       errorContainer.classList.remove("show");
-    }, 3000);
+    }, 5000);
   }
 
   if (status) {

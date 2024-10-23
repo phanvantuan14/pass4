@@ -109,7 +109,7 @@ i:hover {
   left: 0;
   border: 1px solid #ced4da;
   border-radius: 4px;
-  background-color: #ccc;
+  background-color: #fff;
   padding: 10px;
   width: 150px;
   z-index: 10;
@@ -146,6 +146,20 @@ i:hover {
 .filter-container button:hover {
   background-color: #007bff;
   color: white;
+}
+
+/* table */
+.content-table {
+  height: 400px;
+  overflow-y: scroll;
+}
+
+.content-table::-webkit-scrollbar {
+  display: none;
+}
+
+.content-table {
+  scrollbar-width: none;
 }
 
 table {
@@ -198,6 +212,12 @@ table .action-column {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  padding: 10px 0;
+  text-align: center;
 }
 
 .pagination button {
