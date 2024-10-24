@@ -309,10 +309,11 @@ if (isset($_POST['add-product'])) {
 // add property
 if (isset($_POST['add-property'])) {
 
-    $categories_input = $_POST["categories"]; // Chuỗi, ví dụ: "a,b,c"
-    $tags_input = $_POST["tags"]; // Chuỗi, ví dụ: "x,y,z"
+    $categories_input = trim($_POST["categories"]); // Chuỗi, ví dụ: "a,b,c"
+    $tags_input = trim($_POST["tags"]); // Chuỗi, ví dụ: "x,y,z"
 
-    if(empty($categories_input) && empty($tags_input)){
+    if(empty($categories_input) && empty($tags_input) ||
+            ($categories_input == '' && $tags_input =='')){
         $_SESSION['status'] = "Add property failed.";
         header("location: index.php");
         exit;
