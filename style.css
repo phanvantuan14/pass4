@@ -169,17 +169,26 @@ table {
   font-size: var(--fontSize);
 }
 
+table th {
+  background: #ccc;
+  font-size: var(--fontSize);
+  line-height: 30px;
+  position: sticky;
+  top: -1px;
+  z-index: 1;
+}
+
 table,
 th,
 td {
   border: 1px solid #dee2e6;
   word-wrap: break-word;
   word-break: break-all;
+  padding: 6px;
 }
 
 th,
 td {
-  padding: 10px;
   text-align: left;
   max-width: 100px;
   overflow-wrap: break-word;
@@ -191,6 +200,7 @@ table .action-column {
   justify-content: space-around;
   align-items: center;
   border: none;
+  line-height: 0;
 }
 .center-column {
   text-align: center;

@@ -131,9 +131,11 @@ include './util/get-tag-category.php';
                         <th>Gallery</th>
                         <th>Categories</th>
                         <th>Tags</th>
-                        <th class="action-column">
-                            Action
-                            <i class="fas fa-trash-alt delete-all"></i>
+                        <th>
+                            <div class="action-column">
+                                <p> Action </p>
+                                <i class="fas fa-trash-alt delete-all"></i>
+                            </div>
                         </th>
                     </tr>
                 </thead>
@@ -324,7 +326,7 @@ include './util/get-tag-category.php';
     <script src="./js/main.js"></script>
     <script src="./js/popup.js"></script>
     <script src="./js/get-data-edit.js"></script>
-    <script src="./js/delete-one.js"></script>
+    <!-- <script src="./js/delete-one.js"></script> -->
     <script src="./js/read-file-image.js"></script>
 
     

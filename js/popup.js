@@ -25,7 +25,7 @@ $(document).ready(function () {
     editProduct.show();
   });
 
-  $("#productResults").on("click", ".delete-one-icon", function () {
+  $(".productResults").on("click", ".delete-one-icon", function () {
     deleteProduct.show();
   });
 

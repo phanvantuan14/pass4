@@ -264,36 +264,84 @@ $(document).ready(function () {
     );
   }
 
-  $(document).on("click", ".page-number", function () {
-    currentPage = parseInt($(this).text());
-    if (isFilter) {
-      loadFilteredProducts(currentPage);
-    } else {
-      loadProducts(currentPage);
-    }
-  });
-
-  $(document).on("click", "#prevPage", function () {
-    if (currentPage > 1) {
-      currentPage--;
+  function handlePageNum() {
+    $(document).on("click", ".page-number", function () {
+      currentPage = parseInt($(this).text());
       if (isFilter) {
         loadFilteredProducts(currentPage);
       } else {
         loadProducts(currentPage);
       }
-    }
-  });
+    });
+  }
+  handlePageNum();
 
-  $(document).on("click", "#nextPage", function () {
-    if (currentPage < totalPages) {
-      currentPage++;
-      if (isFilter) {
-        loadFilteredProducts(currentPage);
-      } else {
-        loadProducts(currentPage);
+  function prevPage() {
+    $(document).on("click", "#prevPage", function () {
+      if (currentPage > 1) {
+        currentPage--;
+        if (isFilter) {
+          loadFilteredProducts(currentPage);
+        } else {
+          loadProducts(currentPage);
+        }
       }
-    }
-  });
+    });
+  }
+  prevPage();
+
+  function nextPage() {
+    $(document).on("click", "#nextPage", function () {
+      if (currentPage < totalPages) {
+        currentPage++;
+        if (isFilter) {
+          loadFilteredProducts(currentPage);
+        } else {
+          loadProducts(currentPage);
+        }
+      }
+    });
+  }
+  nextPage();
+
+  function deleteOneProduct() {
+    $(".productResults").on("click", ".delete-one-icon", function () {
+      const productId = $(this).data("id");
+      console.log(productId);
+      $("#product_id").val(productId);
+
+      $("#confirmDelete").on("click", function (e) {
+        e.preventDefault();
+
+        $.ajax({
+          method: "POST",
+          url: "./core.php",
+          data: {
+            "click-delete-one": true,
+            id: productId,
+          },
+          success: function (data) {
+            console.log(data);
+            if (typeof data === "string") {
+              data = JSON.parse(data);
+            }
+            if (data.success) {
+              const deleteProduct = $("#deleteOneProduct");
+              deleteProduct.hide();
+              alert("Xoa thanh cong");
+              loadProducts(currentPage);
+            } else {
+              alert("Xoa that bai");
+            }
+          },
+          error: function () {
+            alert("Error occurred while deleting the product.");
+          },
+        });
+      });
+    });
+  }
+  deleteOneProduct();
 
   loadProducts(currentPage);
   filterProduct();

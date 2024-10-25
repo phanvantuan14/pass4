@@ -309,8 +309,8 @@ if (isset($_POST['add-product'])) {
 // add property
 if (isset($_POST['add-property'])) {
 
-    $categories_input = trim($_POST["categories"]); // Chuỗi, ví dụ: "a,b,c"
-    $tags_input = trim($_POST["tags"]); // Chuỗi, ví dụ: "x,y,z"
+    $categories_input = trim($_POST["categories"]); 
+    $tags_input = trim($_POST["tags"]);
 
     if(empty($categories_input) && empty($tags_input) ||
             ($categories_input == '' && $tags_input =='')){
@@ -536,7 +536,7 @@ if (isset($_POST['edit-product'])) {
 
 
 //delete one product
-if (isset($_POST['click-delete-one-btn'])) {
+if (isset($_POST['click-delete-one'])) {
     $id = $_POST['id'];
 
     mysqli_begin_transaction($conn);
@@ -601,9 +601,9 @@ if (isset($_POST['delete-all'])){
 
 
     if ($result) {
-        $_SESSION['status'] = "Delete successfuly";
+        $_SESSION['status'] = "Delete all successfuly";
     } else {
-        $_SESSION['status'] = "Delete faile";
+        $_SESSION['status'] = "Delete all faile";
     }
 
 

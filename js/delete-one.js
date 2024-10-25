@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $("#productResults").on("click", ".delete-one-icon", function () {
+  $(".productResults").on("click", ".delete-one-icon", function () {
     const productId = $(this).data("id");
 
     $("#product_id").val(productId);
@@ -20,7 +20,11 @@ $(document).ready(function () {
             data = JSON.parse(data);
           }
           if (data.success) {
-            location.reload();
+            alert("Xoa thanh cong");
+
+            // location.reload();
+          } else {
+            alert("Xoa that bai");
           }
         },
         error: function () {
