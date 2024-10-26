@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 23, 2024 lúc 04:19 AM
+-- Thời gian đã tạo: Th10 26, 2024 lúc 10:42 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -40,16 +40,23 @@ CREATE TABLE `categories` (
 
 INSERT INTO `categories` (`id`, `name`) VALUES
 (1, '9mail'),
+(35, 'ad'),
+(42, 'adasd'),
 (15, 'ao'),
+(36, 'asd'),
 (2, 'bopo'),
 (29, 'C1'),
 (28, 'd3'),
+(40, 'dfsfsd'),
 (32, 'DUOC'),
+(43, 'f5vv'),
 (34, 'fc4'),
 (33, 'FG'),
 (7, 'fly'),
 (3, 'plugins'),
 (4, 'pofily'),
+(41, 'sd'),
+(37, 'sdsa'),
 (27, 'SNAP'),
 (30, 't6');
 
@@ -76,28 +83,27 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `sku`, `title`, `price`, `sale_price`, `featured_image`, `description`, `created_date`, `modified_date`) VALUES
-(2, 'SKU123', '9MAIL – WordPress Email Templates Designer', 90.00, 75.00, 'https://villatheme.com/wp-content/uploads/2022/03/01_preview-3.jpg', 'WordPress Email Templates Designer is a useful tool for creating and customizing WordPress emails. If the default WordPress email template appears plain to you and you want to customize it.', '2024-10-02 11:56:10', '2024-10-15 02:55:45'),
-(3, 'ASDHSA-XLL', 'DEPART – Deposit and Part payment for WooCommerce', 80.00, 50.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product B', '2024-10-02 19:04:43', '2024-10-03 12:37:24'),
-(4, 'SKU123-C', 'REES – Real Estate for WooCommerce', 100.00, 90.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product C', '2024-10-03 11:41:59', '2024-10-03 12:37:43'),
-(5, 'SKU123-D', 'SUBRE – WooCommerce Product Subscription – Recurring Payments', 40.00, 30.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product D', '2024-10-03 11:41:59', '2024-10-03 12:37:56'),
-(6, 'SKU123-E', 'Clear Autoptimize Cache Automatically', 60.00, 55.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product E', '2024-10-03 11:41:59', '2024-10-03 12:38:12'),
-(8, 'SKU123-G', 'EPOW – WooCommerce Custom Product Options', 30.00, 25.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product G', '2024-10-03 11:50:21', '2024-10-03 12:40:41'),
-(9, 'SKU123-H', 'FEWC – WooCommerce Extra Checkout Fields', 20.00, 15.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product H', '2024-10-03 11:50:21', '2024-10-03 12:41:03'),
-(10, 'SKU123-J', 'HAPPY – Helpdesk – Support Ticket System for WordPress and WooCommerce', 40.00, 35.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product J', '2024-10-03 11:50:21', '2024-10-03 12:38:58'),
-(11, 'SKU123-K', 'Product K', 75.00, 65.00, 'https://villatheme.com/wp-content/uploads/2021/08/01_preview-7.jpg', 'Description for Product K', '2024-10-03 11:51:58', '2024-10-03 11:51:58'),
-(18, 'SKU0015', 'Product 15', 100.00, 80.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRewwYxfQgfQHoR1abBr0xQoEEU6yYYVOvzLQ&s', 'Product 15 description', '2024-10-04 01:23:15', '2024-10-16 03:33:34'),
-(71, 'SKU-EC63F3E5', 'vuong lam', 122.00, NULL, 'https://cellphones.com.vn/sforum/wp-content/uploads/2024/01/lich-chieu-phim-tien-nghich-4.jpg', NULL, '2024-10-15 08:27:34', '2024-10-16 01:15:13'),
-(72, 'SKU-6774B4ED', 'hoang thien de', 1000.00, NULL, 'https://product.hstatic.net/200000425523/product/img_2468_1735630c6587484eb77e257388e8fc81.jpg', NULL, '2024-10-16 03:31:27', '2024-10-16 03:31:27'),
-(73, 'SKU-411C5394', 'sona', 9999.00, NULL, 'https://thanhnien.mediacdn.vn/Uploaded/game/st.game.thanhnien.com.vn/image/25/2015/03/12.03/thanh-nien-game-esport-lmht-nu-tuong-co-vong-mot-dep-nhat-01.jpg', NULL, '2024-10-18 06:44:21', '2024-10-18 06:44:21'),
-(74, 'SKU-757ECDC1', 'tran binh an', 18999.00, NULL, 'https://i.pinimg.com/736x/36/0a/df/360adf1890d453a4d219f9ac170fbac3.jpg', NULL, '2024-10-19 02:09:20', '2024-10-19 02:09:20'),
-(83, 'SKU-21AC500B', 'ly mo uyen', 998.00, NULL, 'th.jfif', NULL, '2024-10-19 08:39:17', '2024-10-21 10:29:59'),
-(88, 'SKU-9AE8BB67', 'vf', 100.00, NULL, 'Screenshot 2024-09-17 093655.png', NULL, '2024-10-21 04:09:05', '2024-10-21 04:09:05'),
-(89, 'SKU-AA9A0103', 'de', 12.00, NULL, 'anhnahahad.png', NULL, '2024-10-21 04:25:26', '2024-10-21 04:25:26'),
 (91, 'SKU-60A7472F', 'ssa', 100.00, NULL, 'images.jfif', NULL, '2024-10-21 05:00:47', '2024-10-21 09:17:49'),
 (92, 'SKU-CC1B2F08', 'meo chu xa', 1999.00, NULL, 'images.jfif', NULL, '2024-10-21 09:03:36', '2024-10-22 04:05:12'),
 (93, 'SKU-1318C7AC', 'gb', 130.00, NULL, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif', NULL, '2024-10-22 01:24:07', '2024-10-22 01:24:07'),
 (94, 'SKU-8AE08366', 'ong thu', 100.00, NULL, 'tải xuống.jfif', NULL, '2024-10-23 01:10:02', '2024-10-23 01:10:20'),
-(95, 'SKU-D8BEE647', 'dss', 140.00, NULL, 'tải xuống.jpg', NULL, '2024-10-23 01:10:54', '2024-10-23 01:11:44');
+(95, 'SKU-D8BEE647', 'dss', 140.00, NULL, 'tải xuống.jpg', NULL, '2024-10-23 01:10:54', '2024-10-23 01:11:44'),
+(96, 'SKU-67075766', 'ds', 100.00, NULL, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif', NULL, '2024-10-25 01:35:43', '2024-10-25 09:19:09'),
+(97, 'SKU-F0A0AC4E', 'dasd', 100.00, NULL, 'th.jfif', NULL, '2024-10-25 09:21:06', '2024-10-25 09:21:06'),
+(99, 'SKU-853CBDCC', 'sa', 130.00, NULL, 'tải xuống (1).png', NULL, '2024-10-26 01:19:05', '2024-10-26 01:19:05'),
+(105, 'SKU-20EF6563', 'sad', 100.00, NULL, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif', NULL, '2024-10-26 02:16:23', '2024-10-26 02:16:23'),
+(106, 'SKU-B3AA48A8', 'sd', 100.00, NULL, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif', NULL, '2024-10-26 02:19:44', '2024-10-26 02:19:44'),
+(107, 'SKU-E7F189C1', 'sdsa', 100.00, NULL, 'th.jfif', NULL, '2024-10-26 02:20:24', '2024-10-26 02:20:24'),
+(130, 'SKU-506CC83F', 'sads', 100.00, NULL, '', NULL, '2024-10-26 02:48:28', '2024-10-26 02:48:28'),
+(131, 'SKU-F5B6FF68', 'sd', 100.00, NULL, '', NULL, '2024-10-26 02:51:52', '2024-10-26 02:51:52'),
+(132, 'SKU-8D90E229', 'C', 100.00, NULL, '', NULL, '2024-10-26 02:52:10', '2024-10-26 02:52:10'),
+(133, 'SKU-B65E816A', 'dsdsd', 100.00, NULL, '', NULL, '2024-10-26 02:52:29', '2024-10-26 04:32:15'),
+(140, 'SKU-5028EE5A', 'sd', 100.00, NULL, 'th.jfif', NULL, '2024-10-26 03:12:04', '2024-10-26 03:12:04'),
+(144, 'SKU-80F39638', 'sd', 100.00, NULL, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif', NULL, '2024-10-26 03:19:57', '2024-10-26 03:19:57'),
+(146, 'SKU-E79DC819', 'asd', 100.00, NULL, 'images.jfif', NULL, '2024-10-26 03:23:34', '2024-10-26 03:23:34'),
+(150, 'SKU-61E5D9A8', 'asd', 100.00, NULL, 'tải xuống.jfif', NULL, '2024-10-26 03:30:45', '2024-10-26 03:30:45'),
+(152, 'SKU-2337C3C2', 'dasdasd', 100.00, NULL, 'images.jfif', NULL, '2024-10-26 03:31:26', '2024-10-26 03:40:27'),
+(158, 'SKU-D7DACA8E', 'adsssd', 100.00, NULL, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif', NULL, '2024-10-26 04:15:34', '2024-10-26 04:32:05');
 
 -- --------------------------------------------------------
 
@@ -115,20 +121,6 @@ CREATE TABLE `product_categories` (
 --
 
 INSERT INTO `product_categories` (`product_id`, `category_id`) VALUES
-(2, 1),
-(2, 15),
-(18, 2),
-(18, 4),
-(18, 27),
-(18, 28),
-(73, 4),
-(73, 28),
-(73, 30),
-(73, 32),
-(73, 33),
-(74, 28),
-(74, 29),
-(74, 32),
 (92, 7),
 (92, 33),
 (93, 3),
@@ -136,7 +128,17 @@ INSERT INTO `product_categories` (`product_id`, `category_id`) VALUES
 (93, 33),
 (94, 30),
 (95, 4),
-(95, 27);
+(95, 27),
+(96, 28),
+(96, 32),
+(106, 7),
+(106, 33),
+(107, 30),
+(158, 1),
+(158, 27),
+(158, 32),
+(158, 34),
+(158, 42);
 
 -- --------------------------------------------------------
 
@@ -155,13 +157,6 @@ CREATE TABLE `product_gallery` (
 --
 
 INSERT INTO `product_gallery` (`id`, `product_id`, `image`) VALUES
-(145, 72, 'https://product.hstatic.net/200000425523/product/img_2468_1735630c6587484eb77e257388e8fc81.jpg'),
-(155, 71, 'https://i.pinimg.com/originals/71/83/67/71836727bdff43330b24c35446c121be.jpg'),
-(164, 18, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRewwYxfQgfQHoR1abBr0xQoEEU6yYYVOvzLQ&s'),
-(165, 18, 'https://i.pinimg.com/originals/71/83/67/71836727bdff43330b24c35446c121be.jpg'),
-(166, 18, ' https://product.hstatic.net/200000425523/product/img_2468_1735630c6587484eb77e257388e8fc81.jpg'),
-(168, 74, ''),
-(169, 73, ''),
 (191, 91, 'tải xuống (1).png'),
 (192, 91, 'tải xuống.jfif'),
 (193, 91, 'tải xuống.jpg'),
@@ -169,9 +164,6 @@ INSERT INTO `product_gallery` (`id`, `product_id`, `image`) VALUES
 (200, 93, 'tải xuống.jpg'),
 (201, 93, 'tải xuống.png'),
 (202, 93, 'tải xuốngg.jpg'),
-(220, 89, 'tải xuống (1).png'),
-(221, 89, 'tải xuống.jfif'),
-(222, 89, 'tải xuống.jpg'),
 (224, 92, 'tải xuống.jfif'),
 (225, 92, 'tải xuống.jpg'),
 (226, 92, 'tải xuống.png'),
@@ -181,7 +173,34 @@ INSERT INTO `product_gallery` (`id`, `product_id`, `image`) VALUES
 (238, 94, 'tải xuống.jfif'),
 (239, 94, 'tải xuống.jpg'),
 (240, 94, 'tải xuống.png'),
-(241, 94, 'tải xuốngg.jpg');
+(241, 94, 'tải xuốngg.jpg'),
+(242, 96, 'tải xuống (1).png'),
+(243, 96, 'tải xuống.jfif'),
+(244, 96, 'tải xuống.jpg'),
+(248, 97, 'tải xuống.png'),
+(249, 97, 'tải xuốngg.jpg'),
+(250, 97, 'th.jfif'),
+(251, 99, 'tải xuống (1).png'),
+(252, 99, 'tải xuống.jfif'),
+(253, 99, 'tải xuống.jpg'),
+(256, 105, 'tải xuống.jfif'),
+(257, 105, 'tải xuống.jpg'),
+(258, 106, 'tải xuống.png'),
+(259, 106, 'tải xuốngg.jpg'),
+(260, 107, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif'),
+(261, 107, 'images.jfif'),
+(265, 140, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif'),
+(266, 140, 'images.jfif'),
+(267, 144, 'tải xuống.jfif'),
+(268, 144, 'tải xuống.jpg'),
+(269, 152, 'fea698d6-936f-49b1-9385-cd5a66acad8b.jfif'),
+(270, 152, 'images.jfif'),
+(271, 152, 'tải xuốngg.jpg'),
+(272, 152, 'th.jfif'),
+(275, 146, 'tải xuống.png'),
+(276, 146, 'tải xuốngg.jpg'),
+(277, 158, 'tải xuống.png'),
+(278, 158, 'tải xuốngg.jpg');
 
 -- --------------------------------------------------------
 
@@ -199,20 +218,22 @@ CREATE TABLE `product_tags` (
 --
 
 INSERT INTO `product_tags` (`product_id`, `tag_id`) VALUES
-(2, 10),
-(2, 12),
-(18, 10),
-(18, 24),
-(74, 9),
-(74, 10),
-(74, 12),
-(74, 24),
 (92, 27),
 (93, 9),
 (93, 10),
 (93, 12),
 (94, 10),
-(94, 24);
+(94, 24),
+(96, 2),
+(96, 21),
+(106, 9),
+(106, 10),
+(107, 9),
+(107, 10),
+(107, 24),
+(158, 1),
+(158, 2),
+(158, 31);
 
 -- --------------------------------------------------------
 
@@ -230,10 +251,15 @@ CREATE TABLE `tags` (
 --
 
 INSERT INTO `tags` (`id`, `name`) VALUES
+(36, 'ad'),
 (1, 'apartment'),
+(37, 'asdasd'),
+(33, 'asds'),
+(32, 'ass'),
 (26, 'C2'),
 (2, 'ecommerce'),
 (21, 'f6'),
+(34, 'f6d'),
 (31, 'fc6'),
 (30, 'HG'),
 (25, 'l3'),
@@ -241,6 +267,11 @@ INSERT INTO `tags` (`id`, `name`) VALUES
 (9, 'New Tag 1'),
 (10, 'New Tag 2'),
 (24, 'SAPSHOST'),
+(41, 'SAQQQ'),
+(38, 'sasdsad'),
+(39, 'sd'),
+(35, 'sdfsd'),
+(40, 'SSSA'),
 (27, 't1'),
 (3, 'wordpress');
 
@@ -298,25 +329,25 @@ ALTER TABLE `tags`
 -- AUTO_INCREMENT cho bảng `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
 
 --
 -- AUTO_INCREMENT cho bảng `product_gallery`
 --
 ALTER TABLE `product_gallery`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=242;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=279;
 
 --
 -- AUTO_INCREMENT cho bảng `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
