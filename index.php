@@ -1,6 +1,6 @@
 <?php
 session_start();
-include './util/get-tag-category.php';
+include './util/getCategoryAndTag.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,36 +10,17 @@ include './util/get-tag-category.php';
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="./style.css">
+    
     <script src="https://kit.fontawesome.com/051c46ace9.js" crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <title>KING OF W</title>
+    <title>Manager Product</title>
 </head>
 
 
 <body>
     <div class="container">
-
-        <?php
-        if (isset($_SESSION['status']) && $_SESSION['status'] != '') {
-        ?>
-            <h3 id="status">
-                <?php echo $_SESSION['status']; ?>
-            </h3>
-        <?php
-            unset($_SESSION['status']);
-        } ?>
-
-        <?php if (isset($_SESSION['errors'])): ?>
-            <div class="alert-danger" id="errorContainer">
-                <?php foreach ($_SESSION['errors'] as $error): ?>
-                    <span><?php echo $error; ?></span>
-                <?php endforeach; ?>
-            </div>
-            <?php unset($_SESSION['errors']); ?>
-        <?php endif; ?>
 
         <section class="header">
             <div class="top-header">
@@ -144,8 +125,6 @@ include './util/get-tag-category.php';
         </section>
         <div class="pagination">
         </div>
-        
-        
     </div>
 
 
@@ -154,15 +133,15 @@ include './util/get-tag-category.php';
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Add New Product</h2>
-            <form id="addProductForm" method="POST" action="core.php" enctype="multipart/form-data" >
+            <form id="addProductForm" enctype="multipart/form-data" >
                 <label for="sku">SKU:</label>
-                <input type="text" name="sku">
+                <input type="text" class="modal-input" name="sku">
 
                 <label for="productName">Product Name:</label>
-                <input type="text" name="title" required>
+                <input type="text" class="modal-input" name="title" required>
 
                 <label for="price">Price:</label>
-                <input type="text" name="price" required>
+                <input type="number" class="modal-input" name="price" required>
 
                 <label for="featured_image">Feature Image:</label>
                 <div class="featured_image_parent">
@@ -197,8 +176,9 @@ include './util/get-tag-category.php';
                     </div>
                 </div>
                 
-
-                <button name="add-product" type="submit">Add Product</button>
+                
+                <h3 class="modal-succ"></h3>
+                <button name="add-product"  type="submit">Add Product</button>
             </form>
 
         </div>
@@ -211,15 +191,16 @@ include './util/get-tag-category.php';
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Add New Property</h2>
-            <form id="addPropertyForm" method="POST" action="core.php">
-                <input type="hidden" name="form_type" value="add_property">
-
+            <form id="addPropertyForm">
+                <input type="hidden"  name="form_type" value="add_property">
 
                 <label for="category">Category:</label>
-                <input type="text" name="categories">
+                <input type="text" class="modal-input" name="categories">
 
                 <label for="Tag">Tag:</label>
-                <input type="text" name="tags">
+                <input type="text" class="modal-input" name="tags">
+                
+                <h3 class="modal-succ"></h3>
                 <button name="add-property" type="submit">Add Property</button>
             </form>
         </div>
@@ -233,18 +214,18 @@ include './util/get-tag-category.php';
             <span class="close">&times;</span>
             <h2>Edit Product</h2>
 
-            <form id="editProductForm" method="POST" action="core.php"  enctype="multipart/form-data">
+            <form id="editProductForm" enctype="multipart/form-data">
 
                 <input type="hidden" id="product_id" name="id">
 
                 <label for="sku">SKU:</label>
-                <input type="text" id="sku" name="sku" required>
+                <input type="text" class="modal-input" id="sku" name="sku" required>
 
                 <label for="productName">Product Name:</label>
-                <input type="text" id="title" name="title" required>
+                <input type="text" class="modal-input" id="title" name="title" required>
 
                 <label for="price">Price:</label>
-                <input type="text" id="price" name="price" required>
+                <input type="number" class="modal-input" id="price" name="price" required>
 
                 <label for="featured_image">Feature Image:</label>
                 <div class="featured_image_parent">
@@ -279,7 +260,7 @@ include './util/get-tag-category.php';
                         <?php endforeach; ?>
                     </div>
                 </div>
-
+                <h3 class="modal-succ"></h3>
                 <button name="edit-product" type="submit">Update Changes</button>
             </form>
         </div>
@@ -326,7 +307,6 @@ include './util/get-tag-category.php';
     <script src="./js/main.js"></script>
     <script src="./js/popup.js"></script>
     <script src="./js/get-data-edit.js"></script>
-    <!-- <script src="./js/delete-one.js"></script> -->
     <script src="./js/read-file-image.js"></script>
 
     

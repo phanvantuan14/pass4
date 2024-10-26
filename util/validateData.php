@@ -1,10 +1,8 @@
 <?php 
 
 function validateProduct($conn, $sku, $title, $price, $type) {
-    // Mảng chứa lỗi
     $errors = [];
 
-    // Validate SKU
     if (!empty($sku) && $type === 'add') {
         $sql_check_sku = "SELECT * FROM products WHERE sku = '$sku'";
         $result_check_sku = mysqli_query($conn, $sql_check_sku);
@@ -13,12 +11,10 @@ function validateProduct($conn, $sku, $title, $price, $type) {
         }
     }
 
-    // Validate title
     if (empty($title)) {
         $errors[] = "Title is required.";
     }
 
-    // Validate price
     if (empty($price)) {
         $errors[] = "Price is required.";
     } elseif (!is_numeric($price) || $price <= 0) {
@@ -34,7 +30,7 @@ function validateProduct($conn, $sku, $title, $price, $type) {
 
 
 
-    return $errors; // Trả về mảng chứa lỗi
+    return $errors; 
 }
 
 

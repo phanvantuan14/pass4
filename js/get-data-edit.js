@@ -21,7 +21,7 @@ $(document).ready(function () {
 
           if (data.featured_image) {
             $("#featured_image_preview-edit")
-              .attr("src", "/uploads/" + data.featured_image)
+              .attr("src", "./uploads/" + data.featured_image)
               .show();
             $(".featured_image_title").val(data.featured_image);
           } else {

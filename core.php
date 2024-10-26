@@ -2,6 +2,10 @@
 session_start();
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 include './util/validateData.php';
+include './util/handleFileUpload.php';
+include './util/handleGalleryUploads.php';
+include './util/handleCategoriesAndTags.php';
+
 
 
 
@@ -32,6 +36,7 @@ if (isset($_GET['view-product'])) {
 
     $result = $conn->query($sql);
 
+
     if ($result === false) {
         echo json_encode(['error' => 'Query failed: ' . $conn->error]);
         exit;
@@ -43,6 +48,7 @@ if (isset($_GET['view-product'])) {
             $products[] = $row;
         }
     }
+
 
     echo json_encode([
         'products' => $products
@@ -176,146 +182,67 @@ if (isset($_GET['search'])) {
 
 
 // add product
-if (isset($_POST['add-product'])) {
-    $sku = trim($_POST["sku"]); 
+if (isset($_POST['action']) && $_POST['action'] === 'add-product') {
 
+    $sku = trim($_POST["sku"]); 
     if (empty($sku)) {
         $sku = 'SKU-' . strtoupper(bin2hex(random_bytes(4))); 
     }
 
     $title = trim($_POST["title"]);
     $price = trim($_POST["price"]);
-    $gallery_images = $_POST["gallery_images"];
-    $categories = $_POST["categories"];
-    $tags = $_POST["tags"];
+    $categories = isset($_POST["categories"]) ? $_POST["categories"] : [];
+    $tags = isset($_POST["tags"]) ? $_POST["tags"] : [];
     $uploadedFile = null;
-    
+
     $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[0]);
-
     if (!empty($errors)) {
-        $_SESSION['errors'] = $errors;
-        $_SESSION['show_modal'] = true;
-        header("location: index.php");
+        echo json_encode(['status' => 'error', 'message' => implode(", ", $errors)]);
         exit;
     }
 
-    if (isset($_FILES['featured_image_file']) &&
-    $_FILES['featured_image_file']['error'] === UPLOAD_ERR_OK) {
-        // Lấy thông tin file
-        $fileTmpPath = $_FILES['featured_image_file']['tmp_name'];
-        $fileName = $_FILES['featured_image_file']['name'];
-        $fileSize = $_FILES['featured_image_file']['size'];
-        $fileType = $_FILES['featured_image_file']['type'];
-        $fileNameCmps = explode(".", $fileName);
-        $fileExtension = strtolower(end($fileNameCmps));
-
-        // Định nghĩa các loại file hợp lệ
-        $allowedfileExtensions = array('jpg', 'gif', 'png', 'jpeg', 'jfif');
-
-        if (in_array($fileExtension, $allowedfileExtensions)) {
-            // Đường dẫn thư mục tải lên
-            $uploadFileDir = './uploads/';
-            $dest_path = $uploadFileDir . $fileName;
-
-            // Di chuyển file vào thư mục đích
-            if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                // Nếu upload thành công, lưu tên file vào biến
-                $uploadedFile = $fileName;
-            } else {
-                echo 'There was an error moving the uploaded file.';
-            }
-        } else {
-            echo 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions);
+    if (isset($_FILES['featured_image_file']) && $_FILES['featured_image_file']['error'] === UPLOAD_ERR_OK) {
+        $uploadedFile = handleFileUpload($_FILES['featured_image_file']);
+        if (!$uploadedFile) {
+            echo json_encode(['status' => 'error', 'message' => 'No file uploaded or there was an error during the upload.']);
+            exit;
         }
-    } else {
-        // Nếu không có file được upload
-        $uploadedFile = null;
-        echo 'No file uploaded or there was an error during the upload.';
     }
 
-    // $imageURL = $uploadedFile ? $uploadedFile : $featured_image;
-    
     $sql_query = "INSERT INTO products (sku, title, price, featured_image) 
-                VALUES ('$sku', '$title', '$price', '$uploadedFile')";
+                    VALUES ('$sku', '$title', '$price', '$uploadedFile')";
     $result = mysqli_query($conn, $sql_query);
-
     $last_product_id = mysqli_insert_id($conn);
+
     if (!$last_product_id) {
-        $_SESSION['status'] = "Add product failed.";
-        header("location: index.php");
+        echo json_encode(['status' => 'error', 'message' => 'Add product failed.']);
         exit;
     }
-
 
     if (isset($_FILES['gallery_images_file'])) {
-        $uploadFileDir = './uploads/';
-        $allowedfileExtensions = array('jpg', 'gif', 'png', 'jpeg', 'jfif');
-        
-        // Lặp qua tất cả các file được chọn
-        foreach ($_FILES['gallery_images_file']['name'] as $key => $fileName) {
-            $fileTmpPath = $_FILES['gallery_images_file']['tmp_name'][$key];
-            $fileSize = $_FILES['gallery_images_file']['size'][$key];
-            $fileType = $_FILES['gallery_images_file']['type'][$key];
-            $fileNameCmps = explode(".", $fileName);
-            $fileExtension = strtolower(end($fileNameCmps));
-    
-            // Kiểm tra định dạng file có hợp lệ không
-            if (in_array($fileExtension, $allowedfileExtensions)) {
-                // Tạo đường dẫn đích đến nơi lưu trữ file
-                $dest_path = $uploadFileDir . $fileName;
-    
-                // Di chuyển file vào thư mục đích
-                if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                    // Nếu upload thành công, lưu tên file vào cơ sở dữ liệu
-                    $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
-                                    VALUES ('$last_product_id', '$fileName')";
-                    mysqli_query($conn, $sql_gallery);
-                    echo 'File ' . $fileName . ' uploaded successfully.<br>';
-                } else {
-                    echo 'Error moving the file ' . $fileName . '.<br>';
-                }
-            } else {
-                echo 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions) . '<br>';
-            }
-        }
-    } else {
-        echo 'No files were uploaded.<br>';
-    }
-    
-
-    foreach ($categories as $category_id) {
-        $sql_category = "INSERT INTO product_categories (product_id, category_id) 
-                            VALUES ('$last_product_id', '$category_id')";
-        mysqli_query($conn, $sql_category);
+        handleGalleryUploads($_FILES['gallery_images_file'], $last_product_id);
     }
 
-    foreach ($tags as $tag_id) {
-        $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
-                        VALUES ('$last_product_id', '$tag_id')";
-        mysqli_query($conn, $sql_tag);
-    }
+    handleCategoriesAndTags($categories, $tags, $last_product_id);
 
     if ($result) {
-        $_SESSION['status'] = "Add product successfully.";
+        echo json_encode(['status' => 'success']);
     } else {
-        $_SESSION['status'] = "Add product failed.";
+        echo json_encode(['status' => 'error']);
     }
-
-    header("location: index.php");
-    exit();
+    exit;
 }
 
 
+
 // add property
-if (isset($_POST['add-property'])) {
+if (isset($_POST['action']) && $_POST['action'] === 'add-property') {
 
     $categories_input = trim($_POST["categories"]); 
     $tags_input = trim($_POST["tags"]);
 
-    if(empty($categories_input) && empty($tags_input) ||
-            ($categories_input == '' && $tags_input =='')){
-        $_SESSION['status'] = "Add property failed.";
-        header("location: index.php");
+    if (empty($categories_input) && empty($tags_input)) {
+        echo json_encode(['status' => 'error', 'message' => 'Add property failed.']);
         exit;
     }
 
@@ -326,37 +253,37 @@ if (isset($_POST['add-property'])) {
         $tags = explode(",", $tags_input);
 
         foreach ($categories as $category) {
-            if (!empty($categories)) {
+            $category = trim($category);
+            if (!empty($category)) {
                 $sql_category = "INSERT INTO categories (name) VALUES ('$category')";
                 $conn->query($sql_category);
             }
         }
 
         foreach ($tags as $tag) {
-            if (!empty($tags)) {
+            $tag = trim($tag); 
+            if (!empty($tag)) {
                 $sql_tag = "INSERT INTO tags (name) VALUES ('$tag')";
                 $conn->query($sql_tag);
             }
         }
 
-        $result = $conn->commit();
-        if ($result) {
-            $_SESSION['status'] = "Add property successfuly";
-        } else {
-            $_SESSION['status'] = "Add property faile";
-        }
+        $conn->commit();    
+        
+
+        echo json_encode(['status' => 'success']);
     } catch (Exception $e) {
         $conn->rollback();
+        echo json_encode(['status' => 'error']);
     }
 
-    header("location: index.php");
     exit();
 }
 
 
 //get data to form update product
 if (isset($_POST['click-edit-btn'])) {
-    $id = $conn->real_escape_string($_POST['id']); 
+    $id = $conn->real_escape_string($_POST['id']);  
     
     $sql_query = "SELECT p.id, p.sku, p.title, p.price, p.featured_image, 
             GROUP_CONCAT(DISTINCT c.id) AS category_ids,
@@ -393,7 +320,7 @@ if (isset($_POST['click-edit-btn'])) {
 
 
 // update product
-if (isset($_POST['edit-product'])) {
+if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
 
     $id = $_POST['id'];
     $sku = trim($_POST["sku"]); 
@@ -407,22 +334,20 @@ if (isset($_POST['edit-product'])) {
             $sku = $row['sku']; 
         } else {
             $sku = null; 
+            exit;
         }
     }
 
     $title = trim($_POST["title"]);
     $price = trim($_POST["price"]);
-    $featured_image = trim($_POST["featured_image_file"]);
-    $gallery_images = $_POST["gallery_images_file"];
+    $featured_image = isset($_POST["featured_image_file"]) ? $_POST["featured_image_file"] : [];
+    $gallery_images = isset($_POST["gallery_images_file"]) ? $_POST["gallery_images_file"] : [];
     $categories = $_POST["categories"];
     $tags = $_POST["tags"];
 
     $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[1]);
 
     if (!empty($errors)) {
-        $_SESSION['errors'] = $errors;
-        $_SESSION['show_modal'] = true;
-        header("location: index.php");
         exit;
     }
 
@@ -430,108 +355,75 @@ if (isset($_POST['edit-product'])) {
         $featured_image_name = basename($_FILES['featured_image_file']['name']);
         $featured_image_target = "./uploads/" . $featured_image_name;
 
-        if (move_uploaded_file($_FILES['featured_image_file']['tmp_name'], $featured_image_target)) {
+        if (move_uploaded_file($_FILES['featured_image_file']['tmp_name'], 
+            $featured_image_target
+        )) {
             $sql_update_product = "UPDATE products SET featured_image = '$featured_image_name' WHERE id = $id";
             mysqli_query($conn, $sql_update_product);
-        } else {
-            error_log("Error uploading featured image.");
-        }
+        } 
     }
 
-    if (isset($_FILES['gallery_images_file-edit'])) {
-        echo '<pre>';
-        print_r($_FILES['gallery_images_file-edit']);
-        echo '</pre>';
-    }
         
     if (isset($_FILES['gallery_images_file-edit']) && count($_FILES['gallery_images_file-edit']['name']) > 0) {
-        // Kiểm tra xem có ít nhất một file hợp lệ không
         $hasNewFiles = false;
         foreach ($_FILES['gallery_images_file-edit']['name'] as $key => $gallery_image_name) {
-            // Kiểm tra nếu tên file không rỗng và không có lỗi
             if (!empty($gallery_image_name) && $_FILES['gallery_images_file-edit']['error'][$key] === UPLOAD_ERR_OK) {
                 $hasNewFiles = true;
-                break;
+                break;  
             }
         }
     
         if ($hasNewFiles) {
-            // Nếu có ít nhất một hình ảnh mới, xóa hình ảnh cũ
             $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
             mysqli_query($conn, $sql_delete_gallery);
     
             foreach ($_FILES['gallery_images_file-edit']['name'] as $key => $gallery_image_name) {
-                // Kiểm tra lỗi tải lên
                 if ($_FILES['gallery_images_file-edit']['error'][$key] === UPLOAD_ERR_OK) {
                     $gallery_image_target = "./uploads/" . basename($gallery_image_name);
                     if (move_uploaded_file($_FILES['gallery_images_file-edit']['tmp_name'][$key], $gallery_image_target)) {
-                        // Thêm hình ảnh mới vào cơ sở dữ liệu
+
                         $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
                                         VALUES ('$id', '$gallery_image_name')";
                         mysqli_query($conn, $sql_gallery);
-                    } else {
-                        error_log("Error uploading gallery image: " . $gallery_image_name);
-                    }
-                } else {
-                    error_log("Error with file upload: " . $_FILES['gallery_images_file-edit']['error'][$key]);
+                    } 
                 }
             }
         }
     }
     
     
-
-
-    // Update product details
     $sql_update_product = "UPDATE products SET sku = '$sku', title = '$title', price = '$price' WHERE id = $id";
     mysqli_query($conn, $sql_update_product);
-    if (mysqli_error($conn)) {
-        error_log("Error updating product: " . mysqli_error($conn));
-    }
 
-    // Update categories
+
     $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_categories);
-    if (mysqli_error($conn)) {
-        error_log("Error deleting categories: " . mysqli_error($conn));
-    }
 
     foreach ($categories as $category_id) {
         $sql_category = "INSERT INTO product_categories (product_id, category_id) 
                         VALUES ('$id', '$category_id')";
         mysqli_query($conn, $sql_category);
-        if (mysqli_error($conn)) {
-            error_log("Error inserting category: " . mysqli_error($conn));
-        }
     }
 
-    // Update tags
+
     $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_tags);
-    if (mysqli_error($conn)) {
-        error_log("Error deleting tags: " . mysqli_error($conn));
-    }
+
 
     foreach ($tags as $tag_id) {
         $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
                     VALUES ('$id', '$tag_id')";
         mysqli_query($conn, $sql_tag);
-        if (mysqli_error($conn)) {
-            error_log("Error inserting tag: " . mysqli_error($conn));
-        }
     }
 
-    // Feedback to user
     if (mysqli_affected_rows($conn) > 0) {
-        $_SESSION['status'] = "Product updated successfully";
+        echo json_encode(['status' => 'success']);
     } else {
-        $_SESSION['status'] = "Failed to update product";
+        echo json_encode(['status' => 'error']);
     }
-
-    header("location: index.php");
-    exit();
+    
+    exit;
 }
-
 
 
 

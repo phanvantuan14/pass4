@@ -5,6 +5,8 @@ $(document).ready(function () {
   let isFilter = false;
 
   function viewProductList(products) {
+    console.log(products);
+
     let html = "";
 
     $.each(products, function (index, product) {
@@ -19,7 +21,7 @@ $(document).ready(function () {
       html += "<td>" + product.sku + "</td>";
       html += "<td>$" + product.price + "</td>";
       html +=
-        "<td><img src='/uploads/" +
+        "<td><img src='./uploads/" +
         product.featured_image +
         "' height='100' width='100%' alt='Feature image'></td>";
 
@@ -28,7 +30,7 @@ $(document).ready(function () {
         html += "<td><div class='gallery-cell'>";
         $.each(galleryImages, function (i, image) {
           html +=
-            "<img src='/uploads/" +
+            "<img src='./uploads/" +
             image +
             "' class='gallery-img' alt='Gallery image'>";
         });
@@ -304,6 +306,122 @@ $(document).ready(function () {
   }
   nextPage();
 
+  function addProduct() {
+    $("#addProductForm").on("submit", function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+
+      formData.append("action", "add-product");
+
+      $.ajax({
+        type: "POST",
+        url: "core.php",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+          try {
+            const data = JSON.parse(response);
+            if (data.status === "success") {
+              $(".modal-succ").text("Thêm thành công").show();
+
+              $("#addProductForm")[0].reset();
+              $("#featured_image_preview").attr("src", "");
+              $("#gallery_images_preview").empty();
+
+              formData = {};
+              loadProducts(currentPage);
+            } else {
+              $(".modal-succ")
+                .text(data.message || "Thêm thất bại")
+                .show();
+            }
+          } catch (error) {
+            $(".modal-succ").text("Có lỗi xảy ra.").show();
+          }
+        },
+        error: function () {
+          alert("Có lỗi xảy ra trong quá trình thêm sản phẩm.");
+        },
+      });
+    });
+  }
+  addProduct();
+
+  function addProperty() {
+    $("#addPropertyForm").on("submit", function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+      formData.append("action", "add-property");
+
+      $.ajax({
+        type: "POST",
+        url: "core.php",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+          try {
+            const data = JSON.parse(response);
+            if (data.status === "success") {
+              $(".modal-succ").text("Thêm thành công").show();
+              $("#addPropertyForm")[0].reset();
+              formData = {};
+            } else {
+              $(".modal-succ").text("Thêm thất bại").show();
+            }
+          } catch (error) {
+            $(".modal-succ").text("Có lỗi xảy ra.").show();
+          }
+        },
+        error: function () {
+          alert("Có lỗi xảy ra trong quá trình thêm thuộc tính.");
+        },
+      });
+    });
+  }
+  addProperty();
+
+  function updateProduct() {
+    $("#editProductForm").on("submit", function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+
+      formData.append("action", "update-product");
+
+      $.ajax({
+        type: "POST",
+        url: "core.php",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+          try {
+            const data = JSON.parse(response);
+            if (data.status === "success") {
+              $(".modal-succ").text("Update thành công").show();
+              formData = {};
+              loadProducts(currentPage);
+            } else {
+              $(".modal-succ")
+                .text(data.message || "Update thất bại")
+                .show();
+            }
+          } catch (error) {
+            $(".modal-succ").text("Có lỗi xảy ra.").show();
+          }
+        },
+        error: function () {
+          alert("Có lỗi xảy ra trong quá trình edit sản phẩm.");
+        },
+      });
+    });
+  }
+  updateProduct();
+
   function deleteOneProduct() {
     $(".productResults").on("click", ".delete-one-icon", function () {
       const productId = $(this).data("id");
@@ -328,7 +446,6 @@ $(document).ready(function () {
             if (data.success) {
               const deleteProduct = $("#deleteOneProduct");
               deleteProduct.hide();
-              alert("Xoa thanh cong");
               loadProducts(currentPage);
             } else {
               alert("Xoa that bai");
@@ -351,6 +468,7 @@ $(document).ready(function () {
 window.onload = function () {
   let errorContainer = document.getElementById("errorContainer");
   let status = document.getElementById("status");
+  let succ = document.querySelector(".modal-succ");
 
   if (errorContainer) {
     errorContainer.classList.add("show");
@@ -364,5 +482,11 @@ window.onload = function () {
     setTimeout(function () {
       status.style.display = "none";
     }, 5000);
+  }
+
+  if (succ) {
+    setTimeout(function () {
+      succ.style.display = "none";
+    }, 6000);
   }
 };

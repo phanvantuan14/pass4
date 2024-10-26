@@ -39,7 +39,7 @@ i:hover {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -94,7 +94,7 @@ i:hover {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 #categoryContainer,
@@ -176,6 +176,7 @@ table th {
   position: sticky;
   top: -1px;
   z-index: 1;
+  overflow: hidden;
 }
 
 table,
@@ -305,12 +306,17 @@ table:hover i.delete-all {
   font-size: var(--fontSize);
 }
 
-.modal input[type="text"] {
+.modal .modal-input {
   width: 96%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 20px;
+}
+
+.modal .modal-succ {
+  margin: 10px;
+  color: rgb(10, 176, 10);
 }
 
 .modal button[type="submit"] {

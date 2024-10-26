@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Cơ sở dữ liệu: `phantuan_sql`
 --
+CREATE DATABASE phantuan_sql;
+USE phantuan_sql;
 
 -- --------------------------------------------------------
 
