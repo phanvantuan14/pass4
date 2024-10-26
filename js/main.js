@@ -325,6 +325,7 @@ $(document).ready(function () {
             const data = JSON.parse(response);
             if (data.status === "success") {
               $(".modal-succ").text("Thêm thành công").show();
+              getStatus();
 
               $("#addProductForm")[0].reset();
               $("#featured_image_preview").attr("src", "");
@@ -336,9 +337,11 @@ $(document).ready(function () {
               $(".modal-succ")
                 .text(data.message || "Thêm thất bại")
                 .show();
+              getStatus();
             }
           } catch (error) {
             $(".modal-succ").text("Có lỗi xảy ra.").show();
+            getStatus();
           }
         },
         error: function () {
@@ -367,13 +370,17 @@ $(document).ready(function () {
             const data = JSON.parse(response);
             if (data.status === "success") {
               $(".modal-succ").text("Thêm thành công").show();
+              getStatus();
+
               $("#addPropertyForm")[0].reset();
               formData = {};
             } else {
               $(".modal-succ").text("Thêm thất bại").show();
+              getStatus();
             }
           } catch (error) {
             $(".modal-succ").text("Có lỗi xảy ra.").show();
+            getStatus();
           }
         },
         error: function () {
@@ -403,15 +410,19 @@ $(document).ready(function () {
             const data = JSON.parse(response);
             if (data.status === "success") {
               $(".modal-succ").text("Update thành công").show();
+              getStatus();
+
               formData = {};
               loadProducts(currentPage);
             } else {
               $(".modal-succ")
                 .text(data.message || "Update thất bại")
                 .show();
+              getStatus();
             }
           } catch (error) {
             $(".modal-succ").text("Có lỗi xảy ra.").show();
+            getStatus();
           }
         },
         error: function () {
@@ -460,33 +471,17 @@ $(document).ready(function () {
   }
   deleteOneProduct();
 
+  function getStatus() {
+    let $succ = $(".modal-succ");
+    console.log($succ);
+    if ($succ.length) {
+      setTimeout(function () {
+        $succ.fadeOut(1000);
+      }, 2000);
+    }
+  }
+
   loadProducts(currentPage);
   filterProduct();
   searchProduct();
 });
-
-window.onload = function () {
-  let errorContainer = document.getElementById("errorContainer");
-  let status = document.getElementById("status");
-  let succ = document.querySelector(".modal-succ");
-
-  if (errorContainer) {
-    errorContainer.classList.add("show");
-
-    setTimeout(function () {
-      errorContainer.classList.remove("show");
-    }, 5000);
-  }
-
-  if (status) {
-    setTimeout(function () {
-      status.style.display = "none";
-    }, 5000);
-  }
-
-  if (succ) {
-    setTimeout(function () {
-      succ.style.display = "none";
-    }, 6000);
-  }
-};
