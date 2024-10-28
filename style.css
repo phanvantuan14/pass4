@@ -230,6 +230,13 @@ table .action-column {
   text-align: center;
 }
 
+.delete-one-icon,
+.edit-btn,
+.delete-all {
+  padding: 6px;
+}
+
+/* pagination */
 .pagination {
   display: flex;
   justify-content: center;

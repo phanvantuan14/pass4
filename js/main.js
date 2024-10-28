@@ -54,6 +54,7 @@ $(document).ready(function () {
   }
 
   function loadProducts(currentPage) {
+    isFilter = false;
     $.ajax({
       url: "core.php",
       type: "GET",
@@ -142,20 +143,19 @@ $(document).ready(function () {
       page: currentPage,
     };
 
-    if (formData.sort_by === "date" && formData.sort_order === "DESC") {
-      if (
-        formData.categories.length === 0 &&
-        formData.tags.length === 0 &&
-        formData.date_from === "" &&
-        formData.date_to === "" &&
-        formData.price_from === "" &&
-        formData.price_to === "" &&
-        formData.page === 1
-      ) {
-        isFilter = false;
-        loadProducts(formData.currentPage);
-      }
-    }
+    // if (formData.sort_by === "date" && formData.sort_order === "DESC") {
+    //   if (
+    //     formData.categories.length === 0 &&
+    //     formData.tags.length === 0 &&
+    //     formData.date_from === "" &&
+    //     formData.date_to === "" &&
+    //     formData.price_from === "" &&
+    //     formData.price_to === ""
+    //   ) {
+    //     isFilter = false;
+    //     loadProducts(formData.currentPage);
+    //   }
+    // }
 
     $.ajax({
       url: "core.php",
@@ -405,10 +405,13 @@ $(document).ready(function () {
         data: formData,
         contentType: false,
         processData: false,
-        success: function (response) {
-          console.log(response);
+        success: function (data) {
+          console.log(data);
           try {
-            const data = JSON.parse(response);
+            if (typeof data === "string") {
+              data = JSON.parse(data);
+            }
+            // const data = JSON.parse(response);
             if (data.status === "success") {
               $(".modal-succ").text("Update thành công").show();
               getStatus();
@@ -439,18 +442,18 @@ $(document).ready(function () {
       console.log(productId);
       $("#product_id").val(productId);
 
-      $("#confirmDelete").on("click", function (e) {
+      $("#confirmDeleteOne").on("click", function (e) {
         e.preventDefault();
 
         $.ajax({
           method: "POST",
-          url: "./core.php",
+          url: "core.php",
           data: {
             "click-delete-one": true,
             id: productId,
           },
           success: function (data) {
-            console.log(data);
+            console.log("delete one ", data);
             if (typeof data === "string") {
               data = JSON.parse(data);
             }
@@ -470,6 +473,36 @@ $(document).ready(function () {
     });
   }
   deleteOneProduct();
+
+  function deleteAllProducts() {
+    $("#confirmDeleteAll").on("click", function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        method: "POST",
+        url: "core.php",
+        data: {
+          "click-delete-all": true,
+        },
+        success: function (data) {
+          console.log(data);
+          if (typeof data === "string") {
+            data = JSON.parse(data);
+          }
+          if (data.success) {
+            $("#deleteAllProduct").hide();
+            loadProducts(currentPage);
+          } else {
+            alert("Xóa tất cả sản phẩm thất bại!");
+          }
+        },
+        error: function () {
+          alert("Đã xảy ra lỗi khi xóa tất cả sản phẩm.");
+        },
+      });
+    });
+  }
+  deleteAllProducts();
 
   function getStatus() {
     let $succ = $(".modal-succ");

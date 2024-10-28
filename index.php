@@ -273,10 +273,10 @@ include './util/getCategoryAndTag.php';
             <span class="close">&times;</span>
             <h2>Confirm Delete</h2>
             <div class="modal-delete">
-                <form id="deleteOneProductForm" method="POST" action="core.php">
+                <form id="deleteOneProductForm" method="POST">
                     <p>Are you sure you want to delete this product?</p>
                     <input type="hidden" id="product_id" name="id">
-                    <button n class="btn-delete" id="confirmDelete">Yes, Delete</button>
+                    <button n class="btn-delete" id="confirmDeleteOne">Yes, Delete</button>
                 </form>
                 <button id="cancelDelete">Cancel</button>
             </div>
@@ -291,9 +291,9 @@ include './util/getCategoryAndTag.php';
             <span class="close">&times;</span>
             <h2>Confirm Delete All</h2>
             <div class="modal-delete">
-                <form id="deleteAllProductForm" method="POST" action="core.php">
+                <form id="deleteAllProductForm" method="POST">
                     <p>Are you sure you want to delete all product?</p>
-                    <button name="delete-all" class="btn-delete">Yes, Delete</button>
+                    <button name="delete-all" class="btn-delete" id="confirmDeleteAll">Yes, Delete</button>
                 </form>
                 <button id="cancelDeleteAll">Cancel</button>
             </div>

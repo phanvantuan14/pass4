@@ -1,13 +1,11 @@
 <?php
-session_start();
+
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
+
 include './util/validateData.php';
 include './util/handleFeatureUpload.php';
 include './util/handleGalleryUploads.php';
 include './util/handleCategoriesAndTags.php';
-
-
-
 
 $typeValidate = ['add', 'edit'];
 
@@ -57,11 +55,11 @@ if (isset($_GET['view-product'])) {
 
 
 
-//filter product
+// filter product
 if (isset($_GET['filter-product'])) {
 
     $sortBy = $_GET['sort_by'] ?? '';
-    $sortOrder = $_GET['sort_order'] ?? 'ASC';
+    $sortOrder = strtoupper($_GET['sort_order'] ?? 'ASC') === 'DESC' ? 'DESC' : 'ASC';
     $categories = $_GET['categories'] ?? [];
     $tags = $_GET['tags'] ?? [];
     $dateFrom = $_GET['date_from'] ?? '';
@@ -85,41 +83,50 @@ if (isset($_GET['filter-product'])) {
             LEFT JOIN categories c ON pc.category_id = c.id
             LEFT JOIN product_tags pt ON p.id = pt.product_id
             LEFT JOIN tags t ON pt.tag_id = t.id
-            WHERE 1=1"; 
+            WHERE 1=1";
 
     if (!empty($categories) && is_array($categories)) {
-        $categories = array_map('intval', $categories); 
-        $categoriesList = implode(",", $categories);    
-        $sql .= " AND p.id IN (SELECT pc.product_id FROM product_categories pc WHERE pc.category_id IN ($categoriesList) GROUP BY pc.product_id HAVING COUNT(DISTINCT pc.category_id) = " . count($categories) . ")";
+        $categories = array_map('intval', $categories);
+        $categoriesList = implode(",", $categories);
+        $sql .= " AND p.id IN (
+            SELECT pc.product_id FROM product_categories pc 
+            WHERE pc.category_id IN ($categoriesList)
+            GROUP BY pc.product_id 
+            HAVING COUNT(DISTINCT pc.category_id) = " . count($categories) . ")";
     }
 
     if (!empty($tags) && is_array($tags)) {
-        $tags = array_map('intval', $tags); 
-        $tagsList = implode(",", $tags);    
-        $sql .= " AND p.id IN (SELECT pt.product_id FROM product_tags pt WHERE pt.tag_id IN ($tagsList) GROUP BY pt.product_id HAVING COUNT(DISTINCT pt.tag_id) = " . count($tags) . ")";
+        $tags = array_map('intval', $tags);
+        $tagsList = implode(",", $tags);
+        $sql .= " AND p.id IN (
+            SELECT pt.product_id FROM product_tags pt 
+            WHERE pt.tag_id IN ($tagsList)
+            GROUP BY pt.product_id 
+            HAVING COUNT(DISTINCT pt.tag_id) = " . count($tags) . ")";
     }
 
-
     if (!empty($dateFrom)) {
-        $sql .= " AND p.created_date >= '" . $conn->real_escape_string($dateFrom) . "'";
+        $dateFrom = $conn->real_escape_string($dateFrom);
+        $sql .= " AND p.created_date >= '$dateFrom'";
     }
 
     if (!empty($dateTo)) {
-        $sql .= " AND p.created_date <= '" . $conn->real_escape_string($dateTo) . "'";
+        $dateTo = $conn->real_escape_string($dateTo);
+        $sql .= " AND p.created_date <= '$dateTo'";
     }
 
     if (!empty($priceFrom)) {
-        $sql .= " AND p.price >= " . (float)$priceFrom;
+        $priceFrom = (float)$priceFrom;
+        $sql .= " AND p.price >= $priceFrom";
     }
 
     if (!empty($priceTo)) {
-        $sql .= " AND p.price <= " . (float)$priceTo;
+        $priceTo = (float)$priceTo;
+        $sql .= " AND p.price <= $priceTo";
     }
 
-    $allowedSortColumns = ['price', 'created_date', 'title'];
-    if (!in_array($sortBy, $allowedSortColumns)) {
-        $sortBy = 'p.created_date'; 
-    }
+    $allowedSortColumns = ['p.price', 'p.created_date', 'p.title'];
+    $sortBy = in_array("p.$sortBy", $allowedSortColumns) ? "p.$sortBy" : 'p.price';
 
     $sql .= " GROUP BY p.id ORDER BY $sortBy $sortOrder;";
 
@@ -131,10 +138,8 @@ if (isset($_GET['filter-product'])) {
     }
 
     $products = [];
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $products[] = $row;
-        }
+    while ($row = $result->fetch_assoc()) {
+        $products[] = $row;
     }
 
     echo json_encode([
@@ -437,14 +442,14 @@ if (isset($_POST['click-delete-one'])) {
 
         if ($result) {
             mysqli_commit($conn);
-            echo json_encode(['success' => true, 'message' => 'Product deleted successfully.']);
+            echo json_encode(['success' => true]);
         } else {
             mysqli_rollback($conn);
-            echo json_encode(['success' => false, 'message' => 'Failed to delete product.']);
+            echo json_encode(['success' => false]);
         }
     } catch (Exception $e) {
         mysqli_rollback($conn);
-        echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        echo json_encode(['success' => false]);
     }
 
     exit();
@@ -452,29 +457,26 @@ if (isset($_POST['click-delete-one'])) {
 
 
 //delete all
-if (isset($_POST['delete-all'])){
-    $sql_query = "DELETE FROM products";
-
-    $result = mysqli_query($conn, $sql_query);
+if (isset($_POST['click-delete-all'])) {
     
-    $sql_gallery = "DELETE FROM  product_gallery";
+    $sql_query = "DELETE FROM products";
+    $result = mysqli_query($conn, $sql_query);
+
+    $sql_gallery = "DELETE FROM product_gallery";
     mysqli_query($conn, $sql_gallery);
 
-    $sql_category = "DELETE FROM  product_categories";
+    $sql_category = "DELETE FROM product_categories";
     mysqli_query($conn, $sql_category);
 
     $sql_tag = "DELETE FROM product_tags";
     mysqli_query($conn, $sql_tag);
 
-
     if ($result) {
-        $_SESSION['status'] = "Delete all successfuly";
+        echo json_encode(['success' => true]);
     } else {
-        $_SESSION['status'] = "Delete all faile";
+        echo json_encode(['success' => false]);
     }
-
-
-    header("location: index.php");
     exit();
-} 
+}
+
 ?>
