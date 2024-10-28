@@ -406,17 +406,17 @@ $(document).ready(function () {
         contentType: false,
         processData: false,
         success: function (response) {
+          console.log(response);
           try {
             const data = JSON.parse(response);
             if (data.status === "success") {
               $(".modal-succ").text("Update thành công").show();
               getStatus();
-
               formData = {};
               loadProducts(currentPage);
             } else {
               $(".modal-succ")
-                .text(data.message || "Update thất bại")
+                .text(data.message | "Update thất bại")
                 .show();
               getStatus();
             }
@@ -473,7 +473,6 @@ $(document).ready(function () {
 
   function getStatus() {
     let $succ = $(".modal-succ");
-    console.log($succ);
     if ($succ.length) {
       setTimeout(function () {
         $succ.fadeOut(1000);

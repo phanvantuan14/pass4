@@ -1,6 +1,6 @@
 <?php 
 // Hàm xử lý upload file
-function handleFileUpload($file) {
+function handleFeatureUpload($file) {
     $allowedfileExtensions = ['jpg', 'gif', 'png', 'jpeg', 'jfif'];
     $fileTmpPath = $file['tmp_name'];
     $fileName = $file['name'];

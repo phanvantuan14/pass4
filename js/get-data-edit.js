@@ -69,21 +69,5 @@ $(document).ready(function () {
     });
   });
 
-  const editProduct = $("#editProductModal");
-  $(".close").on("click", function () {
-    editProduct.hide();
 
-    $("#product_id").val("");
-    $("#sku").val("");
-    $("#title").val("");
-    $("#price").val("");
-    $("#featured_image_preview-edit").hide().attr("src", "");
-    $(".featured_image_title").val("");
-    $("#gallery_images_preview-edit").empty();
-    $(".featured_image_num").val(0);
-
-    // Bỏ chọn tất cả các category và tag
-    $('input[name="categories[]"]').prop("checked", false);
-    $('input[name="tags[]"]').prop("checked", false);
-  });
 });

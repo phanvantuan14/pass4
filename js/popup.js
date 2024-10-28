@@ -11,6 +11,7 @@ $(document).ready(function () {
     addProduct.hide();
     deleteProduct.hide();
     deleteAllProduct.hide();
+    editProduct.hide();
   });
 
   $("#addProduct").on("click", function () {

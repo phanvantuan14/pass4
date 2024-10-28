@@ -2,7 +2,7 @@
 session_start();
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 include './util/validateData.php';
-include './util/handleFileUpload.php';
+include './util/handleFeatureUpload.php';
 include './util/handleGalleryUploads.php';
 include './util/handleCategoriesAndTags.php';
 
@@ -202,7 +202,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add-product') {
     }
 
     if (isset($_FILES['featured_image_file']) && $_FILES['featured_image_file']['error'] === UPLOAD_ERR_OK) {
-        $uploadedFile = handleFileUpload($_FILES['featured_image_file']);
+        $uploadedFile = handleFeatureUpload($_FILES['featured_image_file']);
         if (!$uploadedFile) {
             echo json_encode(['status' => 'error', 'message' => 'No file uploaded or there was an error during the upload.']);
             exit;
@@ -319,11 +319,12 @@ if (isset($_POST['click-edit-btn'])) {
 }
 
 
+
 // update product
 if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
 
     $id = $_POST['id'];
-    $sku = trim($_POST["sku"]); 
+    $sku = trim($_POST["sku"]);
 
     if (empty($sku)) {
         $sql_sku = "SELECT p.sku FROM products p WHERE id = '$id'";
@@ -331,19 +332,17 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
         
         if ($result && mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_assoc($result);
-            $sku = $row['sku']; 
-        } else {
-            $sku = null; 
-            exit;
-        }
+            $sku = $row['sku'];
+        } 
     }
 
     $title = trim($_POST["title"]);
     $price = trim($_POST["price"]);
     $featured_image = isset($_POST["featured_image_file"]) ? $_POST["featured_image_file"] : [];
     $gallery_images = isset($_POST["gallery_images_file"]) ? $_POST["gallery_images_file"] : [];
-    $categories = $_POST["categories"];
-    $tags = $_POST["tags"];
+    $categories = isset($_POST["categories"]) ? $_POST["categories"] : [];
+    $tags = isset($_POST["tags"]) ? $_POST["tags"] : [];
+
 
     $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[1]);
 
@@ -352,76 +351,52 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
     }
 
     if (isset($_FILES['featured_image_file']) && $_FILES['featured_image_file']['error'] == UPLOAD_ERR_OK) {
-        $featured_image_name = basename($_FILES['featured_image_file']['name']);
-        $featured_image_target = "./uploads/" . $featured_image_name;
-
-        if (move_uploaded_file($_FILES['featured_image_file']['tmp_name'], 
-            $featured_image_target
-        )) {
+        $featured_image_name = handleFeatureUpload($_FILES['featured_image_file']);
+        if ($featured_image_name) {
             $sql_update_product = "UPDATE products SET featured_image = '$featured_image_name' WHERE id = $id";
             mysqli_query($conn, $sql_update_product);
         } 
     }
 
-        
     if (isset($_FILES['gallery_images_file-edit']) && count($_FILES['gallery_images_file-edit']['name']) > 0) {
         $hasNewFiles = false;
         foreach ($_FILES['gallery_images_file-edit']['name'] as $key => $gallery_image_name) {
             if (!empty($gallery_image_name) && $_FILES['gallery_images_file-edit']['error'][$key] === UPLOAD_ERR_OK) {
                 $hasNewFiles = true;
-                break;  
+                break;
             }
         }
-    
+
         if ($hasNewFiles) {
             $sql_delete_gallery = "DELETE FROM product_gallery WHERE product_id = $id";
             mysqli_query($conn, $sql_delete_gallery);
-    
-            foreach ($_FILES['gallery_images_file-edit']['name'] as $key => $gallery_image_name) {
-                if ($_FILES['gallery_images_file-edit']['error'][$key] === UPLOAD_ERR_OK) {
-                    $gallery_image_target = "./uploads/" . basename($gallery_image_name);
-                    if (move_uploaded_file($_FILES['gallery_images_file-edit']['tmp_name'][$key], $gallery_image_target)) {
-
-                        $sql_gallery = "INSERT INTO product_gallery (product_id, image) 
-                                        VALUES ('$id', '$gallery_image_name')";
-                        mysqli_query($conn, $sql_gallery);
-                    } 
-                }
-            }
+            handleGalleryUploads($_FILES['gallery_images_file-edit'], $id);
         }
     }
-    
-    
+
     $sql_update_product = "UPDATE products SET sku = '$sku', title = '$title', price = '$price' WHERE id = $id";
     mysqli_query($conn, $sql_update_product);
-
 
     $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_categories);
 
-    foreach ($categories as $category_id) {
-        $sql_category = "INSERT INTO product_categories (product_id, category_id) 
-                        VALUES ('$id', '$category_id')";
-        mysqli_query($conn, $sql_category);
-    }
-
-
     $sql_delete_tags = "DELETE FROM product_tags WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_tags);
 
-
-    foreach ($tags as $tag_id) {
-        $sql_tag = "INSERT INTO product_tags (product_id, tag_id) 
-                    VALUES ('$id', '$tag_id')";
-        mysqli_query($conn, $sql_tag);
+    if (empty($categories) && empty($tags)) {
+        echo json_encode(['status' => 'success']);
+        exit;
     }
+
+    handleCategoriesAndTags($categories, $tags, $id);
+
 
     if (mysqli_affected_rows($conn) > 0) {
         echo json_encode(['status' => 'success']);
     } else {
         echo json_encode(['status' => 'error']);
     }
-    
+
     exit;
 }
 
