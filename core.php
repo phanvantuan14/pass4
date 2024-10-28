@@ -111,7 +111,7 @@ if (isset($_GET['filter-product'])) {
     }
 
     if (!empty($dateTo)) {
-        $dateTo = $conn->real_escape_string($dateTo);
+        $dateTo = $conn->real_escape_string($dateTo . " 23:59:59");
         $sql .= " AND p.created_date <= '$dateTo'";
     }
 
@@ -274,8 +274,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'add-property') {
         }
 
         $conn->commit();    
-        
-
         echo json_encode(['status' => 'success']);
     } catch (Exception $e) {
         $conn->rollback();
