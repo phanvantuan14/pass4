@@ -273,7 +273,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add-property') {
             }
         }
 
-        $conn->commit();    
+        $conn->commit();  
         echo json_encode(['status' => 'success']);
     } catch (Exception $e) {
         $conn->rollback();
@@ -282,6 +282,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add-property') {
 
     exit();
 }
+
 
 
 //get data to form update product

@@ -143,20 +143,6 @@ $(document).ready(function () {
       page: currentPage,
     };
 
-    // if (formData.sort_by === "date" && formData.sort_order === "DESC") {
-    //   if (
-    //     formData.categories.length === 0 &&
-    //     formData.tags.length === 0 &&
-    //     formData.date_from === "" &&
-    //     formData.date_to === "" &&
-    //     formData.price_from === "" &&
-    //     formData.price_to === ""
-    //   ) {
-    //     isFilter = false;
-    //     loadProducts(formData.currentPage);
-    //   }
-    // }
-
     $.ajax({
       url: "core.php",
       type: "GET",
@@ -355,7 +341,6 @@ $(document).ready(function () {
   function addProperty() {
     $("#addPropertyForm").on("submit", function (event) {
       event.preventDefault();
-
       var formData = new FormData(this);
       formData.append("action", "add-property");
 
@@ -367,6 +352,7 @@ $(document).ready(function () {
         processData: false,
         success: function (response) {
           try {
+            console.log(response);
             const data = JSON.parse(response);
             if (data.status === "success") {
               $(".modal-succ").text("Thêm thành công").show();
@@ -374,6 +360,7 @@ $(document).ready(function () {
 
               $("#addPropertyForm")[0].reset();
               formData = {};
+              loadProducts(currentPage);
             } else {
               $(".modal-succ").text("Thêm thất bại").show();
               getStatus();

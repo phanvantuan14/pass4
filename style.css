@@ -366,7 +366,8 @@ table:hover i.delete-all {
 
 .modal #featured_image_preview,
 #featured_image_preview-edit {
-  max-height: 800px;
+  max-height: 280px;
+  object-fit: contain;
   margin: 5px;
 }
 .modal #gallery_images_preview {

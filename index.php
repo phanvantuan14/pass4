@@ -65,7 +65,10 @@ include './util/getCategoryAndTag.php';
                         <div id="categoryCheckboxes">
                             <?php foreach ($categories_list as $category): ?>
                                 <div>
-                                    <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
+                                    <input 
+                                        type="checkbox" 
+                                        name="categories[]" 
+                                        value="<?php echo $category['id']; ?>">
                                     <?php echo $category['name']; ?>
                                 </div>
                             <?php endforeach; ?>
@@ -81,7 +84,10 @@ include './util/getCategoryAndTag.php';
                         <div id="tagCheckboxes">
                             <?php foreach ($tags_list as $tag): ?>
                                 <div>
-                                    <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
+                                    <input 
+                                        type="checkbox" 
+                                        name="tags[]" 
+                                        value="<?php echo $tag['id']; ?>">
                                     <?php echo $tag['name']; ?>
                                 </div>
                             <?php endforeach; ?>
@@ -159,7 +165,11 @@ include './util/getCategoryAndTag.php';
                         <label for="categories">Categories:</label>
                         <?php foreach ($categories_list as $category): ?>
                             <div>
-                                <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>">
+                                <input
+                                    type="checkbox" 
+                                    name="categories[]" 
+                                    value="<?php echo    $category['id']; ?>"
+                                >
                                 <?php echo $category['name']; ?>
                             </div>
                         <?php endforeach; ?>
@@ -168,7 +178,11 @@ include './util/getCategoryAndTag.php';
                         <label for="tags">Tags:</label>
                         <?php foreach ($tags_list as $tag): ?>
                                 <div>
-                                    <input type="checkbox" name="tags[]" value="<?php echo $tag['id']; ?>">
+                                    <input 
+                                        type="checkbox" 
+                                        name="tags[]" 
+                                        value="<?php echo $tag['id']; ?>"
+                                    >
                                 <?php echo $tag['name']; ?>
                             </div>
                         <?php endforeach; ?>
@@ -243,7 +257,12 @@ include './util/getCategoryAndTag.php';
                         <label for="categories">Categories:</label>
                         <?php foreach ($categories_list as $category): ?>
                             <div>
-                                <input type="checkbox" id="category_<?php echo $category['id']; ?>" name="categories[]" value="<?php echo $category['id']; ?>">
+                                <input 
+                                    class="category_arr"
+                                    type="checkbox" 
+                                    id="category_<?php echo $category['id']; ?>" 
+                                    name="categories[]" value="<?php echo $category['id']; ?>"
+                                >
                                 <?php echo htmlspecialchars($category['name']); ?>
                             </div>
                         <?php endforeach; ?>
@@ -253,7 +272,12 @@ include './util/getCategoryAndTag.php';
                         <label for="tags">Tags:</label>
                         <?php foreach ($tags_list as $tag): ?>
                             <div>
-                                <input type="checkbox" id="tag_<?php echo $tag['id']; ?>" name="tags[]" value="<?php echo $tag['id']; ?>">
+                                <input
+                                    class="tag_arr" 
+                                    type="checkbox" 
+                                    id="tag_<?php echo $tag['id']; ?>" 
+                                    name="tags[]" value="<?php echo $tag['id']; ?>"
+                                >
                                 <?php echo htmlspecialchars($tag['name']); ?>
                             </div>
                         <?php endforeach; ?>

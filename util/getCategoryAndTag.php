@@ -4,6 +4,8 @@ $tags = [];
 
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 
+
+
 $sql_categories = "SELECT id, name FROM categories";
 $result_categories = $conn->query($sql_categories);
 $categories_list = [];
@@ -21,3 +23,4 @@ if ($result_tags->num_rows > 0) {
         $tags_list[] = $row;
     }
 }
+?>

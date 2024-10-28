@@ -43,7 +43,7 @@ $(document).ready(function () {
           $('input[name="categories[]"]').prop("checked", false);
           if (data.category_ids) {
             data.category_ids.forEach((id) => {
-              $('input[name="categories[]"][value="' + id + '"]').prop(
+              $('input[class="category_arr"][value="' + id + '"]').prop(
                 "checked",
                 true
               );
@@ -53,7 +53,7 @@ $(document).ready(function () {
           $('input[name="tags[]"]').prop("checked", false);
           if (data.tag_ids) {
             data.tag_ids.forEach((id) => {
-              $('input[name="tags[]"][value="' + id + '"]').prop(
+              $('input[class="tag_arr"][value="' + id + '"]').prop(
                 "checked",
                 true
               );
@@ -68,6 +68,4 @@ $(document).ready(function () {
       },
     });
   });
-
-
 });
