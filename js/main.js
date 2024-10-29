@@ -83,7 +83,6 @@ $(document).ready(function () {
       data: { "get_tag-category": true },
       success: function (data) {
         data = JSON.parse(data);
-        console.log(data);
 
         // categories
         let categoriesFilter = $("#categoryCheckboxes");
@@ -211,12 +210,12 @@ $(document).ready(function () {
 
   function loadFilteredProducts(currentPage) {
     let selectedCategories = [];
-    $('input[name="categories[]"]:checked').each(function () {
+    $('input[class="categories_input-filter"]:checked').each(function () {
       selectedCategories.push($(this).val());
     });
 
     let selectedTags = [];
-    $('input[name="tags[]"]:checked').each(function () {
+    $('input[class="tags_input-filter"]:checked').each(function () {
       selectedTags.push($(this).val());
     });
 
@@ -413,7 +412,6 @@ $(document).ready(function () {
               $("#featured_image_preview").attr("src", "");
               $("#gallery_images_preview").empty();
 
-              formData = {};
               loadProducts(currentPage);
             } else {
               $(".modal-succ")
@@ -457,7 +455,6 @@ $(document).ready(function () {
               loadTagAndCategory();
 
               $("#addPropertyForm")[0].reset();
-              formData = {};
             } else {
               $(".modal-succ").text("Thêm thất bại").show();
               getStatus();
@@ -480,7 +477,6 @@ $(document).ready(function () {
       event.preventDefault();
 
       var formData = new FormData(this);
-
       formData.append("action", "update-product");
 
       $.ajax({
@@ -495,20 +491,21 @@ $(document).ready(function () {
             if (typeof data === "string") {
               data = JSON.parse(data);
             }
-            // const data = JSON.parse(response);
             if (data.status === "success") {
               $(".modal-succ").text("Update thành công").show();
               getStatus();
-              formData = {};
+
               loadProducts(currentPage);
             } else {
               $(".modal-succ")
-                .text(data.message | "Update thất bại")
+                .text(data.message || "Update thất bại")
                 .show();
               getStatus();
             }
           } catch (error) {
-            $(".modal-succ").text("Có lỗi xảy ra.").show();
+            $(".modal-succ")
+              .text(data.message || "Có lỗi xảy ra.")
+              .show();
             getStatus();
           }
         },
@@ -516,8 +513,18 @@ $(document).ready(function () {
           alert("Có lỗi xảy ra trong quá trình edit sản phẩm.");
         },
       });
+
+      const close = $(".close");
+      const editProduct = $("#editProductModal");
+      close.on("click", function () {
+        $("#editProductForm")[0].reset();
+        $("#featured_image_preview-edit").attr("src", "");
+        $("#gallery_images_preview-edit").empty();
+        editProduct.hide();
+      });
     });
   }
+
   updateProduct();
 
   function deleteOneProduct() {

@@ -12,7 +12,7 @@ $typeValidate = ['add', 'edit'];
 
 //get tag and category 
 if (isset($_GET['get_tag-category'])) {
-    $sql_categories = "SELECT id, name FROM categories";
+    $sql_categories = "SELECT id, name, COUNT(*) as total FROM categories GROUP BY id, name";
     $result_categories = $conn->query($sql_categories);
     $categories_list = [];
     if ($result_categories->num_rows > 0) {
@@ -21,7 +21,7 @@ if (isset($_GET['get_tag-category'])) {
         }
     }
 
-    $sql_tags = "SELECT id, name FROM tags";
+    $sql_tags = "SELECT id, name, COUNT(*) as total FROM tags GROUP BY id, name";
     $result_tags = $conn->query($sql_tags);
     $tags_list = [];
     if ($result_tags->num_rows > 0) {
@@ -350,7 +350,6 @@ if (isset($_POST['click-edit-btn'])) {
 
 // update product
 if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
-
     $id = $_POST['id'];
     $sku = trim($_POST["sku"]);
 
@@ -371,10 +370,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
     $categories = isset($_POST["categories"]) ? $_POST["categories"] : [];
     $tags = isset($_POST["tags"]) ? $_POST["tags"] : [];
 
-
     $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[1]);
 
     if (!empty($errors)) {
+        echo json_encode(['status' => 'error', 'message' => implode(", ", $errors)]); // Trả về lỗi
         exit;
     }
 
@@ -383,7 +382,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
         if ($featured_image_name) {
             $sql_update_product = "UPDATE products SET featured_image = '$featured_image_name' WHERE id = $id";
             mysqli_query($conn, $sql_update_product);
-        } 
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Lỗi khi tải lên hình ảnh đặc trưng.']);
+            exit;
+        }
     }
 
     if (isset($_FILES['gallery_images_file-edit']) && count($_FILES['gallery_images_file-edit']['name']) > 0) {
@@ -403,7 +405,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
     }
 
     $sql_update_product = "UPDATE products SET sku = '$sku', title = '$title', price = '$price' WHERE id = $id";
-    mysqli_query($conn, $sql_update_product);
+    if (!mysqli_query($conn, $sql_update_product)) {
+        echo json_encode(['status' => 'error', 'message' => 'Lỗi khi cập nhật thông tin sản phẩm.']);
+        exit;
+    }
 
     $sql_delete_categories = "DELETE FROM product_categories WHERE product_id = $id";
     mysqli_query($conn, $sql_delete_categories);
@@ -412,17 +417,16 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
     mysqli_query($conn, $sql_delete_tags);
 
     if (empty($categories) && empty($tags)) {
-        echo json_encode(['status' => 'success']);
+        echo json_encode(['status' => 'success', 'message' => 'Cập nhật thành công mà không có danh mục hay thẻ.']);
         exit;
     }
 
     handleCategoriesAndTags($categories, $tags, $id);
 
-
     if (mysqli_affected_rows($conn) > 0) {
-        echo json_encode(['status' => 'success']);
+        echo json_encode(['status' => 'success', 'message' => 'Cập nhật sản phẩm thành công.']);
     } else {
-        echo json_encode(['status' => 'error']);
+        echo json_encode(['status' => 'error', 'message' => 'Không có thay đổi nào được thực hiện.']);
     }
 
     exit;
