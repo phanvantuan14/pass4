@@ -5,8 +5,6 @@ $(document).ready(function () {
   let isFilter = false;
 
   function viewProductList(products) {
-    console.log(products);
-
     let html = "";
 
     $.each(products, function (index, product) {
@@ -70,6 +68,104 @@ $(document).ready(function () {
 
         viewProductList(productsToShow);
         updatePagination(totalPages, currentPage);
+      },
+      error: function () {
+        alert("Error occurred while fetching products.");
+      },
+    });
+  }
+
+  function loadTagAndCategory() {
+    isFilter = false;
+    $.ajax({
+      url: "core.php",
+      type: "GET",
+      data: { "get_tag-category": true },
+      success: function (data) {
+        data = JSON.parse(data);
+        console.log(data);
+
+        // categories
+        let categoriesFilter = $("#categoryCheckboxes");
+        let categoriesAdd = $(".categories_container-add");
+        let categoriesUpdate = $(".categories_container-update");
+
+        let categoriesFilterItem = $(".categories_filter").first();
+        let categoriesAddItem = $(".categories_add-item").first();
+        let categoriesUpdateItem = $(".categories_update-item").first();
+
+        let addedCategoryIds = new Set();
+
+        categoriesFilter.empty();
+        categoriesAdd.empty();
+        categoriesUpdate.empty();
+
+        data["categories"].forEach((category) => {
+          if (!addedCategoryIds.has(category.id)) {
+            let newCategoryFilter = categoriesFilterItem.clone().show();
+            let newCategoryAdd = categoriesAddItem.clone().show();
+            let newCategoryUpdate = categoriesUpdateItem.clone().show();
+
+            newCategoryFilter.find(".categories_input-filter").val(category.id);
+            newCategoryFilter.find(".categories_name").text(category.name);
+
+            newCategoryAdd.find(".categories_add-input").val(category.id);
+            newCategoryAdd.find(".categories_name").text(category.name);
+
+            newCategoryUpdate
+              .find(".categories_update-input")
+              .val(category.id)
+              .attr("id", `category_${category.id}`);
+            newCategoryUpdate.find(".categories_name").text(category.name);
+
+            categoriesFilter.append(newCategoryFilter);
+            categoriesAdd.append(newCategoryAdd);
+            categoriesUpdate.append(newCategoryUpdate);
+
+            addedCategoryIds.add(category.id);
+          }
+        });
+
+        // tags
+        let tagsFilter = $("#tagCheckboxes");
+        let tagsAdd = $(".tags_container-add");
+        let tagsUpdate = $(".tags_container-update");
+
+        let tagsFilterItem = $(".tags_filter").first();
+        let tagsAddItem = $(".tags_add-item").first();
+        let tagsUpdateItem = $(".tags_update-item").first();
+
+        let addedTagIds = new Set();
+
+        tagsFilter.empty();
+        tagsAdd.empty();
+        tagsUpdate.empty();
+
+        data["tags"].forEach((tag) => {
+          if (!addedTagIds.has(tag.id)) {
+            let newTagFilter = tagsFilterItem.clone().show();
+            let newTagAdd = tagsAddItem.clone().show();
+            let newTagUpdate = tagsUpdateItem.clone().show();
+
+            newTagFilter.find(".tags_input-filter").val(tag.id);
+            newTagFilter.find(".tags_name").text(tag.name);
+
+            newTagAdd.find(".tags_add-input").val(tag.id);
+            newTagAdd.find(".tags_name").text(tag.name);
+
+            newTagUpdate
+              .find(".tags_update-input")
+              .val(tag.id)
+              .attr("id", `tag_${tag.id}`);
+            newTagUpdate.find(".tags_name").text(tag.name);
+
+            tagsFilter.append(newTagFilter);
+            tagsAdd.append(newTagAdd);
+            tagsUpdate.append(newTagUpdate);
+
+            addedTagIds.add(tag.id);
+          }
+        });
       },
       error: function () {
         alert("Error occurred while fetching products.");
@@ -358,9 +454,10 @@ $(document).ready(function () {
               $(".modal-succ").text("Thêm thành công").show();
               getStatus();
 
+              loadTagAndCategory();
+
               $("#addPropertyForm")[0].reset();
               formData = {};
-              loadProducts(currentPage);
             } else {
               $(".modal-succ").text("Thêm thất bại").show();
               getStatus();
@@ -500,6 +597,7 @@ $(document).ready(function () {
     }
   }
 
+  loadTagAndCategory();
   loadProducts(currentPage);
   filterProduct();
   searchProduct();

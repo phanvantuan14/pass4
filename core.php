@@ -10,6 +10,30 @@ include './util/handleCategoriesAndTags.php';
 $typeValidate = ['add', 'edit'];
 
 
+//get tag and category 
+if (isset($_GET['get_tag-category'])) {
+    $sql_categories = "SELECT id, name FROM categories";
+    $result_categories = $conn->query($sql_categories);
+    $categories_list = [];
+    if ($result_categories->num_rows > 0) {
+        while ($row = $result_categories->fetch_assoc()) {
+            $categories_list[] = $row;
+        }
+    }
+
+    $sql_tags = "SELECT id, name FROM tags";
+    $result_tags = $conn->query($sql_tags);
+    $tags_list = [];
+    if ($result_tags->num_rows > 0) {
+        while ($row = $result_tags->fetch_assoc()) {
+            $tags_list[] = $row;
+        }
+    }
+
+    echo json_encode(['status' => 'success', 'categories' => $categories_list, 'tags' => $tags_list]);
+};
+
+
 //get view prodcut
 if (isset($_GET['view-product'])) {
     
@@ -209,7 +233,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add-product') {
     if (isset($_FILES['featured_image_file']) && $_FILES['featured_image_file']['error'] === UPLOAD_ERR_OK) {
         $uploadedFile = handleFeatureUpload($_FILES['featured_image_file']);
         if (!$uploadedFile) {
-            echo json_encode(['status' => 'error', 'message' => 'No file uploaded or there was an error during the upload.']);
+            echo json_encode(['status' => 'error']);
             exit;
         }
     }

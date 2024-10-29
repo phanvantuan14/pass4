@@ -43,17 +43,16 @@ $(document).ready(function () {
           $('input[name="categories[]"]').prop("checked", false);
           if (data.category_ids) {
             data.category_ids.forEach((id) => {
-              $('input[class="category_arr"][value="' + id + '"]').prop(
-                "checked",
-                true
-              );
+              $(
+                'input[class="categories_update-input"][value="' + id + '"]'
+              ).prop("checked", true);
             });
           }
 
           $('input[name="tags[]"]').prop("checked", false);
           if (data.tag_ids) {
             data.tag_ids.forEach((id) => {
-              $('input[class="tag_arr"][value="' + id + '"]').prop(
+              $('input[class="tags_update-input"][value="' + id + '"]').prop(
                 "checked",
                 true
               );

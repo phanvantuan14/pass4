@@ -382,8 +382,10 @@ table:hover i.delete-all {
   margin: 10px;
 }
 
-.categories-container,
-.tags-container {
+.categories_container-add,
+.tags_container-add,
+.categories_container-update,
+.tags_container-update {
   padding: 10px;
 }
 

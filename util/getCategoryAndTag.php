@@ -1,7 +1,4 @@
 <?php
-$categories = [];
-$tags = [];
-
 $conn = mysqli_connect("localhost", "root", "", "phantuan_sql");
 
 
