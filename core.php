@@ -60,7 +60,7 @@ if (isset($_GET['view-product'])) {
 
 
     if ($result === false) {
-        echo json_encode(['error' => 'Query failed: ' . $conn->error]);
+        echo json_encode(['error' => 'Truy vấn thất bại: ' . $conn->error]);
         exit;
     }
 
@@ -150,14 +150,14 @@ if (isset($_GET['filter-product'])) {
     }
 
     $allowedSortColumns = ['p.price', 'p.created_date', 'p.title'];
-    $sortBy = in_array("p.$sortBy", $allowedSortColumns) ? "p.$sortBy" : 'p.price';
+    $sortBy = in_array("p.$sortBy", $allowedSortColumns) ? "p.$sortBy" : 'p.created_date';
 
     $sql .= " GROUP BY p.id ORDER BY $sortBy $sortOrder;";
 
     $result = $conn->query($sql);
 
     if ($result === false) {
-        echo json_encode(['error' => 'Query failed: ' . $conn->error]);
+        echo json_encode(['error' => 'Truy vấn thất bại: ' . $conn->error]);
         exit;
     }
 
@@ -193,8 +193,7 @@ if (isset($_GET['search'])) {
                 LEFT JOIN tags t ON pt.tag_id = t.id
                 WHERE p.title LIKE '%$searchQuery%' 
                 GROUP BY p.id
-                ORDER BY p.created_date DESC
-                LIMIT 5 OFFSET 0;
+                ORDER BY p.created_date DESC;
             ";
 
     $result = $conn->query($sql);
@@ -244,7 +243,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add-product') {
     $last_product_id = mysqli_insert_id($conn);
 
     if (!$last_product_id) {
-        echo json_encode(['status' => 'error', 'message' => 'Add product failed.']);
+        echo json_encode(['status' => 'error', 'message' => 'Thêm sản phẩm thất bại']);
         exit;
     }
 
@@ -271,7 +270,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add-property') {
     $tags_input = trim($_POST["tags"]);
 
     if (empty($categories_input) && empty($tags_input)) {
-        echo json_encode(['status' => 'error', 'message' => 'Add property failed.']);
+        echo json_encode(['status' => 'error', 'message' => 'Thêm danh mục hoặc thẻ thất bại.']);
         exit;
     }
 
@@ -331,9 +330,9 @@ if (isset($_POST['click-edit-btn'])) {
     if ($fetch_query->num_rows > 0) {
         $row = $fetch_query->fetch_assoc();
 
+        $row['gallery_images'] = explode(',', $row['gallery_images']);
         $row['category_ids'] = explode(',', $row['category_ids']);
         $row['tag_ids'] = explode(',', $row['tag_ids']);
-        $row['gallery_images'] = explode(',', $row['gallery_images']);
 
         header('Content-Type: application/json');
         echo json_encode($row);
@@ -353,15 +352,26 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
     $id = $_POST['id'];
     $sku = trim($_POST["sku"]);
 
-    if (empty($sku)) {
-        $sql_sku = "SELECT p.sku FROM products p WHERE id = '$id'";
-        $result = mysqli_query($conn, $sql_sku);
-        
-        if ($result && mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
+    $sql_sku = "SELECT p.sku FROM products p WHERE id = '$id'";
+    $result_sku = mysqli_query($conn, $sql_sku);
+    
+    if (empty($sku)) {   
+        if ($result_sku && mysqli_num_rows($result_sku) > 0) {
+            $row = mysqli_fetch_assoc($result_sku);
             $sku = $row['sku'];
         } 
+    } else {
+        if ($result_sku && mysqli_num_rows($result_sku) > 0) {
+            $row = mysqli_fetch_assoc($result_sku);
+            if ( $sku === $row['sku']){
+                $sku = $row['sku'];
+            } else {
+                echo json_encode(['status' => 'error', 'message' =>"SKU này đã tồn tại"]);
+                exit;
+            }
+        } 
     }
+    
 
     $title = trim($_POST["title"]);
     $price = trim($_POST["price"]);
@@ -373,7 +383,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'update-product') {
     $errors = validateProduct($conn, $sku, $title, $price, $typeValidate[1]);
 
     if (!empty($errors)) {
-        echo json_encode(['status' => 'error', 'message' => implode(", ", $errors)]); // Trả về lỗi
+        echo json_encode(['status' => 'error', 'message' => implode(", ", $errors)]); 
         exit;
     }
 
