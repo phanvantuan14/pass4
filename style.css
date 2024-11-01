@@ -94,6 +94,8 @@ button {
 
 .filter-container {
   width: 100%;
+  font-size: var(--fontSize);
+  color: #000;
 }
 .filter-container #filterForm {
   display: flex;

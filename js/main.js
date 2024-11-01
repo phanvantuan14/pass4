@@ -179,84 +179,46 @@ $(document).ready(function () {
     });
   }
 
-  // function searchProduct(currentPage) {
-  //   isFilter = false;
-  //   $("#searchInput").on("keyup", function () {
-  //     let query = $(this).val();
-  //     if (query === "") {
-  //       $("#searchResults").html("");
-  //       loadProducts(currentPage);
-  //       return;
-  //     }
-  //     isSearch = true;
-
-  //     $.ajax({
-  //       url: "core.php",
-  //       type: "GET",
-  //       data: {
-  //         search: query,
-  //       },
-  //       success: function (response) {
-  //         let products = JSON.parse(response);
-
-  //         const { productsToShow, totalPages } = getProductsForPage(
-  //           products,
-  //           currentPage
-  //         );
-
-  //         console.log(currentPage);
-
-  //         viewProductList(productsToShow);
-  //         updatePagination(totalPages, currentPage);
-  //       },
-  //       error: function () {
-  //         $(".notification").text("Lỗi truy vấn dữ liệu tìm kiếm.").show();
-  //         showNotification();
-  //       },
-  //     });
-  //   });
-  // }
   function searchProduct(currentPage) {
     isFilter = false;
-    let debounceTimer;
+    isSearch = true;
+    let query = $("#searchInput").val();
 
+    $.ajax({
+      url: "core.php",
+      type: "GET",
+      data: {
+        search: query,
+      },
+      success: function (response) {
+        let products = JSON.parse(response);
+
+        const { productsToShow, totalPages } = getProductsForPage(
+          products,
+          currentPage
+        );
+
+        viewProductList(productsToShow);
+        updatePagination(totalPages, currentPage);
+      },
+      error: function () {
+        $(".notification").text("Lỗi truy vấn dữ liệu tìm kiếm.").show();
+        showNotification();
+      },
+    });
+  }
+  function initializeSearchInput() {
+    let debounceTimer;
     $("#searchInput").on("keyup", function () {
       clearTimeout(debounceTimer);
 
-      let query = $(this).val();
-      if (query === "") {
-        $("#searchResults").html("");
-        loadProducts(currentPage);
-        return;
-      }
-      isSearch = true;
-
       debounceTimer = setTimeout(function () {
-        $.ajax({
-          url: "core.php",
-          type: "GET",
-          data: {
-            search: query,
-          },
-          success: function (response) {
-            let products = JSON.parse(response);
-            const { productsToShow, totalPages } = getProductsForPage(
-              products,
-              currentPage
-            );
-
-            console.log(currentPage);
-            viewProductList(productsToShow);
-            updatePagination(totalPages, currentPage);
-          },
-          error: function () {
-            $(".notification").text("Lỗi truy vấn dữ liệu tìm kiếm.").show();
-            showNotification();
-          },
-        });
+        currentPage = 1;
+        checkLoadPages(currentPage);
       }, 300);
     });
   }
+  initializeSearchInput();
 
   function filterProduct() {
     $("#filterButton").on("click", function (e) {
@@ -410,7 +372,6 @@ $(document).ready(function () {
     if (isFilter) {
       loadFilteredProducts(currentPage);
     } else if (isSearch) {
-      console.log(currentPage);
       searchProduct(currentPage);
     } else {
       loadProducts(currentPage);
